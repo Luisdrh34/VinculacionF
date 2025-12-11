@@ -1,0 +1,72 @@
+/* General Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  background-color: #f7f7f7;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #8b0000;
+}
+
+/* Section General */
+.section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #e53e3e;
+}
+
+.section p,
+.section ul {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.section ul {
+  padding-left: 1.5rem;
+}
+
+.section ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* Specific Sections */
+.mission {
+  border-left: 6px solid #e53e3e;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.vision {
+  border-left: 6px solid #4299e1;
+  flex: 1;
+}
+
+/* Mission and Vision Container */
+.mission-vision {
+  display: flex;
+  gap: 1rem;
+}

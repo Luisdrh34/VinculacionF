@@ -1,0 +1,47 @@
+header {
+    background-color: #1c212c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+
+  header .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  header .logo img {
+    height: 4rem; /* Ajusta el tamaño del logotipo según sea necesario */
+    margin-right: 0,5px;
+  }
+
+  header .logo span {
+    color: white;
+    font-size: 24px; /* Ajusta el tamaño del texto según sea necesario */
+    font-weight: bold;
+  }
+
+  header nav ul {
+    display: flex;
+    list-style: none;
+  }
+
+  header nav ul li {
+    margin-left: 20px;
+  }
+
+  header nav ul li a {
+    color: white;
+    text-decoration: none;
+  }
+  header{
+
+    height: 5rem;
+  }
+  button{
+    background-color: #1c212c;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }

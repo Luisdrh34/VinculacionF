@@ -1,0 +1,148 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
+
+  <!-- Header Section -->
+  <div class="mb-8 text-center md:text-left">
+    <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Mi Perfil</h1>
+    <p class="text-gray-500 mt-1 text-sm">Gestiona tu información personal y seguridad de la cuenta.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- Profile Picture Card -->
+    <div class="md:col-span-1">
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 flex flex-col items-center">
+        <div class="relative group">
+          <div
+            class="w-32 h-32 rounded-full overflow-hidden border-4 border-red-50 shadow-inner bg-gray-100 flex items-center justify-center">
+            <img [src]="profileImage || 'assets/default-avatar.png'" class="w-full h-full object-cover"
+              onerror="this.src='https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png'" />
+          </div>
+          <button (click)="fileInput.click()"
+            class="absolute bottom-0 right-0 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg transition-transform transform hover:scale-110 focus:outline-none"
+            pTooltip="Cambiar foto" tooltipPosition="bottom">
+            <i class="pi pi-camera"></i>
+          </button>
+        </div>
+
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden" #fileInput />
+
+        <h2 class="mt-4 text-xl font-bold text-gray-800 text-center">{{ personalInfo.nombres }} {{
+          personalInfo.apellidos }}</h2>
+        <p class="text-gray-500 text-sm text-center mb-4">{{ personalInfo.cedula }}</p>
+
+        <div class="w-full border-t border-gray-100 pt-4 flex flex-col gap-2">
+          <div class="flex flex-col items-center">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wide">Roles</span>
+            <div class="flex flex-wrap gap-1 justify-center mt-1">
+              <span *ngFor="let role of personalInfo.usuarioRoles"
+                class="px-2 py-1 bg-red-50 text-red-600 rounded-md text-xs font-semibold">
+                {{ role.rol.nombre }}
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-col items-center mt-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wide">Áreas</span>
+            <div class="flex flex-wrap gap-1 justify-center mt-1">
+              <span *ngFor="let area1 of personalInfo.usuarioAreas"
+                class="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-medium">
+                {{ area1.area.nombre }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button *ngIf="isEditMode" (click)="saveChanges()"
+          class="mt-4 w-full bg-red-600 text-white py-2 rounded-xl text-sm font-bold shadow hover:shadow-lg transition-all">
+          Guardar Foto
+        </button>
+      </div>
+    </div>
+
+    <!-- Details & Security Column -->
+    <div class="md:col-span-2 flex flex-col gap-6">
+
+      <!-- Personal Info Card -->
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-user text-red-500"></i>
+            <h3 class="font-bold text-gray-700">Información Personal</h3>
+          </div>
+          <button *ngIf="!isEditPersonalInfoMode" (click)="toggleEditPersonalInfo()" pButton icon="pi pi-pencil"
+            class="p-button-rounded p-button-text p-button-secondary w-8 h-8" pTooltip="Editar información"></button>
+        </div>
+
+        <div class="p-6">
+          <div *ngIf="!isEditPersonalInfoMode" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-bold text-gray-400 uppercase">Email</span>
+              <span class="text-gray-800 font-medium">{{ personalInfo.email }}</span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-bold text-gray-400 uppercase">Celular</span>
+              <span class="text-gray-800 font-medium">{{ personalInfo.celular }}</span>
+            </div>
+            <!-- Cédula, Nombres, Apellidos are often read-only, maintained display logic -->
+          </div>
+
+          <div *ngIf="isEditPersonalInfoMode" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-bold text-gray-700">Email</label>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-envelope"></i>
+                <input pInputText [(ngModel)]="personalInfo.email" type="email" class="w-full rounded-lg" />
+              </span>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-bold text-gray-700">Celular</label>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-phone"></i>
+                <input pInputText [(ngModel)]="personalInfo.celular" type="text" class="w-full rounded-lg" />
+              </span>
+            </div>
+
+            <div class="flex justify-end gap-2 mt-2">
+              <button pButton label="Cancelar" class="p-button-text p-button-secondary p-button-sm"
+                (click)="toggleEditPersonalInfo()"></button>
+              <button pButton label="Guardar Cambios" class="p-button-danger p-button-sm rounded-lg"
+                (click)="savePersonalInfoChanges()"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Card -->
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="p-4 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
+          <i class="pi pi-shield text-red-500"></i>
+          <h3 class="font-bold text-gray-700">Seguridad</h3>
+        </div>
+        <div class="p-6">
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-bold text-gray-700">Contraseña actual</label>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-lock"></i>
+                <input pInputText [(ngModel)]="contrasenia" type="password" class="w-full rounded-lg"
+                  placeholder="••••••••" />
+              </span>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-bold text-gray-700">Nueva contraseña</label>
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-lock-open"></i>
+                <input pInputText [(ngModel)]="nuevaContrasenia" type="password" class="w-full rounded-lg"
+                  placeholder="••••••••" />
+              </span>
+            </div>
+            <div class="flex justify-end mt-2">
+              <button pButton label="Actualizar Contraseña" class="p-button-danger p-button-sm rounded-lg"
+                (click)="changePassword()"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

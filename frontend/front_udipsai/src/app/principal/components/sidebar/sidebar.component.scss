@@ -1,0 +1,13 @@
+aside {
+  display: flex;
+  flex-direction: column;
+  width: 18rem; /* Ancho fijo para la barra lateral */
+  background-color: #1c212c;
+  min-height: 100vh;
+  height: 100%;
+}
+
+.active-link {
+  background-color: #2d3748; /* Color de fondo para el enlace activo */
+  color: #fff; /* Color de texto para el enlace activo */
+}

@@ -1,0 +1,34 @@
+/* You can add global styles to this file, and also import other style files */
+/* Importar Tailwind CSS */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Importar PrimeNG y PrimeIcons */
+@import "~primeng/resources/themes/saga-blue/theme.css"; // Puedes cambiar el tema según tu preferencia
+@import "~primeng/resources/primeng.min.css";
+@import "~primeicons/primeicons.css";
+
+@import '../node_modules/ngx-toastr/toastr.css';
+
+
+
+:root{
+  --primary-color: #dd2928;
+  --secondary-color: #c4c3c9;
+  --success-color: #28a745;
+  --info-color: #17a2b8;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --white-color: #fff;
+  --black-color: #000;
+  --gray-color: #6c757d;
+  --gray-dark-color: #343a40;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+}

@@ -1,0 +1,403 @@
+<p-confirmDialog></p-confirmDialog>
+<div class="container">
+  <h1 class="title">Agendamiento de Citas</h1>
+  <p class="subtitle">
+    Por favor, seleccione un paciente para agendar una cita.
+  </p>
+
+  <h2 class="section-title">Pacientes</h2>
+
+  <!-- Campo de búsqueda -->
+  <div class="search-bar">
+    <i class="pi pi-search"></i>
+    <span class="p-input-icon-left">
+      <input
+        type="text"
+        [(ngModel)]="pacienteFilter"
+        (ngModelChange)="loadPacientes()"
+        pInputText
+        placeholder="Número Ficha o Nombres y Apellidos"
+      />
+    </span>
+  </div>
+  <!-- Pantalla de carga con PrimeNG -->
+  <p-progressSpinner
+    *ngIf="loading"
+    [style]="{ position: 'fixed', left: '50%', top: '50%' }"
+    strokeWidth="8"
+    animationDuration=".5s"
+    fill="#EEEEEE"
+    class="custom-spinner"
+  >
+  </p-progressSpinner>
+
+  <div class="card">
+    <p-table
+      [value]="pacientes"
+      [paginator]="true"
+      responsiveLayout="scroll"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onLazyLoad)="loadPasantesLazy($event)"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Acción</th>
+          <th>Número Ficha</th>
+          <th>Nombres y Apillidos</th>
+          <th>Cédula</th>
+          <th>Teléfono</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-paciente>
+        <tr>
+          <td>
+            <button
+              pButton
+              type="button"
+              label="Agendar Cita"
+              icon="pi pi-calendar-plus"
+              class="btn-primary"
+              (click)="agendarCita(paciente)"
+            ></button>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-calendar"
+              class="btn-historial"
+              (click)="mostrarHistorialCitas(paciente)"
+            ></button>
+          </td>
+          <td>{{ paciente.id }}</td>
+          <td>{{ paciente.nombresApellidos }}</td>
+          <td>{{ paciente.cedula }}</td>
+          <td>{{ paciente.telefono }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <div class="flex justify-center items-center mb-4">
+      <!-- Dropdown para seleccionar el número de filas por página -->
+      <p class="text-sm text-gray-600">Filas por página:</p>
+      <p-dropdown
+        [options]="rowsOptions"
+        [(ngModel)]="rows"
+        (onChange)="onRowsChange($event)"
+        placeholder="Filas por página"
+        class="rows-dropdown"
+      ></p-dropdown>
+
+      <!-- Mostrar el total de registros -->
+      <div class="text-center">
+        <p class="text-sm text-gray-600">
+          Total de registros: {{ totalRecords }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Agendamiento de Citas -->
+  <p-dialog
+    header="Agendar Cita"
+    [(visible)]="displayModal"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '80vw' }"
+    [contentStyle]="{ 'min-height': '80vh', overflow: 'auto' }"
+  >
+    <div *ngIf="selectedPaciente" class="p-grid p-fluid form-container">
+      <div class="p-col-12 p-md-6">
+        <div class="p-field field-with-border">
+          <label for="paciente">Paciente</label>
+          <input
+            id="paciente"
+            type="text"
+            pInputText
+            [(ngModel)]="selectedPaciente.nombresApellidos"
+            [disabled]="true"
+            class="input-field"
+          />
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6 p-grid">
+        <div class="p-col-6">
+          <div class="p-field field-with-border">
+            <label for="especialidad">Especialidad</label>
+            <p-dropdown
+              [options]="especialidades"
+              [(ngModel)]="especialidadCita"
+              (onChange)="cargarEspecialistas($event)"
+              placeholder="Seleccione una especialidad"
+            ></p-dropdown>
+          </div>
+        </div>
+        <div class="p-col-6">
+          <div class="p-field field-with-border">
+            <label for="especialista">Especialista</label>
+            <p-dropdown
+              [options]="especialistas"
+              [(ngModel)]="especialistaCita"
+              placeholder="Seleccione un especialista"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6">
+        <div class="p-field field-with-border">
+          <label for="fecha">Fecha</label>
+          <p-calendar
+            [(ngModel)]="fechaCita"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            [inline]="true"
+            [minDate]="minDate"
+            class="custom-calendar"
+          ></p-calendar>
+        </div>
+      </div>
+      <div class="p-col-12 p-md-6">
+        <div class="p-field field-with-border">
+          <button
+            pButton
+            type="button"
+            label="Buscar Horas Disponibles"
+            icon="pi pi-search"
+            (click)="buscarHorasDisponibles()"
+            class="btn-search"
+          ></button>
+        </div>
+      </div>
+
+      <div class="p-col-12 p-md-6">
+        <div class="p-field field-with-border">
+          <label for="hora">Hora</label>
+          <p-dropdown
+            [options]="horasDisponibles"
+            [(ngModel)]="horaCita"
+            placeholder="Seleccione una hora"
+          ></p-dropdown>
+        </div>
+      </div>
+      <div class="p-col-12 buttons-container">
+        <button
+          pButton
+          type="button"
+          (click)="guardarCita()"
+          label="Guardar"
+          icon="pi pi-check"
+          class="btn-save"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Cancelar"
+          icon="pi pi-times"
+          class="p-button-secondary btn-cancel"
+          (click)="displayModal = false"
+        ></button>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Modal de Historial de Citas -->
+  <p-dialog
+    header="Historial de Citas"
+    [(visible)]="displayHistorial"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '80vw' }"
+    [contentStyle]="{ 'min-height': '80vh', overflow: 'auto' }"
+  >
+    <div class="p-grid p-fluid">
+      <div class="p-col-12">
+        <p-table
+          [value]="historialCitas"
+          [paginator]="true"
+          [rows]="rowsHistorial"
+          [totalRecords]="totalRecordsHistorial"
+          [lazy]="true"
+          (onLazyLoad)="loadCitasHistorial($event)"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Especialidad</th>
+              <th>Especialista</th>
+              <th>Certificado</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-cita>
+            <tr>
+              <td>{{ cita.fecha | date : "yyyy-MM-dd" }}</td>
+              <td>{{ cita.horainicio }}</td>
+              <td>{{ cita.nombreArea }}</td>
+              <td>{{ cita.nombres }} {{ cita.apellidos }}</td>
+              <td>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-calendar-plus"
+                  class="btn-primary"
+                  (click)="generarCertificadoAtencion(cita)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <div class="flex justify-center items-center mb-4">
+          <!-- Dropdown para seleccionar el número de filas por página -->
+          <p class="text-sm text-gray-600">Filas por página:</p>
+          <p-dropdown
+            [options]="rowsOptionsHistorial"
+            [(ngModel)]="rowsHistorial"
+            (onChange)="onRowsChangeHistorial($event)"
+            placeholder="Filas por página"
+            class="rows-dropdown"
+          ></p-dropdown>
+
+          <!-- Mostrar el total de registros -->
+          <div class="text-center">
+            <p class="text-sm text-gray-600">
+              Total de registros: {{ totalRecordsHistorial }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-12 buttons-container">
+        <button
+          pButton
+          type="button"
+          label="Imprimir"
+          icon="pi pi-print"
+          (click)="imprimirHistorial()"
+          class="btn-print"
+        ></button>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+
+<!-- Modal de Certificado -->
+<p-dialog
+  header="Certificado de Atención"
+  [(visible)]="displayCertificado"
+  [modal]="true"
+  [responsive]="true"
+  [style]="{ width: '50vw' }"
+  [contentStyle]="{ 'min-height': '50vh', overflow: 'auto' }"
+>
+  <div *ngIf="certificadoPaciente" class="p-grid p-fluid form-container">
+    <div class="p-col-12 text-center">
+      <img
+        src="assets/logo_UDIPS.png"
+        alt="Logo UDIPS"
+        style="width: 300px; height: auto; margin-bottom: 20px"
+      />
+    </div>
+    <div class="p-col-12">
+      <div class="p-field field-with-border">
+        <label for="area">ATENCIÓN EN EL ÁREA:</label>
+        <input
+          id="area"
+          type="text"
+          pInputText
+          [(ngModel)]="certificadoPaciente.area"
+          [disabled]="true"
+          class="input-field"
+        />
+      </div>
+    </div>
+    <div class="p-col-12">
+      <div class="p-field field-with-border">
+        <label for="nombre">Paciente:</label>
+        <input
+          id="nombre"
+          type="text"
+          pInputText
+          [(ngModel)]="certificadoPaciente.nombre"
+          [disabled]="true"
+          class="input-field"
+        />
+      </div>
+    </div>
+    <div class="p-col-12">
+      <div class="p-field field-with-border">
+        <label for="numeroFicha">Número Ficha:</label>
+        <input
+          id="numeroFicha"
+          type="text"
+          pInputText
+          [(ngModel)]="certificadoPaciente.numeroFicha"
+          [disabled]="true"
+          class="input-field"
+        />
+      </div>
+    </div>
+    <div class="p-col-12">
+      <div class="p-field field-with-border">
+        <label for="fechaConsulta">Día de la consulta:</label>
+        <input
+          id="fechaConsulta"
+          type="text"
+          pInputText
+          [(ngModel)]="certificadoPaciente.fechaConsulta"
+          [disabled]="true"
+          class="input-field"
+        />
+      </div>
+    </div>
+    <div class="p-col-6">
+      <div class="p-field field-with-border">
+        <label for="horaDesde">HORA: DESDE</label>
+        <input
+          id="horaDesde"
+          type="text"
+          pInputText
+          [(ngModel)]="certificadoPaciente.horaDesde"
+          [disabled]="true"
+          class="input-field"
+        />
+      </div>
+    </div>
+    <div class="p-col-6">
+      <div class="p-field field-with-border">
+        <label for="horaHasta">HASTA</label>
+        <input
+          id="horaHasta"
+          type="text"
+          pInputText
+          [(ngModel)]="certificadoPaciente.horaHasta"
+          [disabled]="true"
+          class="input-field"
+        />
+      </div>
+    </div>
+
+    <div class="container2"></div>
+
+    <div class="p-col-12 text-center">
+      <p>FIRMA Y SELLO<br />UDIPSAI</p>
+    </div>
+    <div class="p-col-12 buttons-container">
+      <button
+        pButton
+        type="button"
+        label="Imprimir"
+        icon="pi pi-print"
+        (click)="imprimirCertificado()"
+        class="btn-print"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Cerrar"
+        icon="pi pi-times"
+        class="p-button-secondary btn-cancel"
+        (click)="displayCertificado = false"
+      ></button>
+    </div>
+  </div>
+</p-dialog>
