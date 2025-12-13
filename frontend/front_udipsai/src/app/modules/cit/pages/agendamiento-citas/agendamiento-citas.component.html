@@ -1,403 +1,383 @@
 <p-confirmDialog></p-confirmDialog>
-<div class="container">
-  <h1 class="title">Agendamiento de Citas</h1>
-  <p class="subtitle">
-    Por favor, seleccione un paciente para agendar una cita.
-  </p>
 
-  <h2 class="section-title">Pacientes</h2>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
 
-  <!-- Campo de búsqueda -->
-  <div class="search-bar">
-    <i class="pi pi-search"></i>
-    <span class="p-input-icon-left">
-      <input
-        type="text"
-        [(ngModel)]="pacienteFilter"
-        (ngModelChange)="loadPacientes()"
-        pInputText
-        placeholder="Número Ficha o Nombres y Apellidos"
-      />
-    </span>
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Agendamiento de Citas</h1>
+      <p class="text-gray-500 mt-1 text-sm">Busque un paciente y gestione sus citas médicas.</p>
+    </div>
   </div>
-  <!-- Pantalla de carga con PrimeNG -->
-  <p-progressSpinner
-    *ngIf="loading"
-    [style]="{ position: 'fixed', left: '50%', top: '50%' }"
-    strokeWidth="8"
-    animationDuration=".5s"
-    fill="#EEEEEE"
-    class="custom-spinner"
-  >
-  </p-progressSpinner>
 
-  <div class="card">
-    <p-table
-      [value]="pacientes"
-      [paginator]="true"
-      responsiveLayout="scroll"
-      [rows]="rows"
-      [totalRecords]="totalRecords"
-      [lazy]="true"
-      (onLazyLoad)="loadPasantesLazy($event)"
-      responsiveLayout="scroll"
-    >
+  <!-- Main Content Card -->
+  <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+
+    <!-- Search Section -->
+    <div class="p-6 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row gap-4 items-center">
+      <div class="relative w-full md:w-96">
+        <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input type="text" pInputText [(ngModel)]="pacienteFilter" (ngModelChange)="loadPacientes()"
+          placeholder="Buscar por cédula o nombre..."
+          class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-red-100 transition-all font-medium text-gray-700 bg-white shadow-sm" />
+      </div>
+
+      <div class="flex items-center gap-2 text-sm text-gray-500 ml-auto">
+        <span *ngIf="loading" class="flex items-center gap-2 text-red-500 font-medium">
+          <i class="pi pi-spin pi-spinner"></i> Cargando...
+        </span>
+        <span>Total pacientes:</span>
+        <span class="font-bold text-gray-800 bg-gray-200 px-2 py-0.5 rounded-md">{{ totalRecords }}</span>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <p-table [value]="pacientes" [paginator]="true" [rows]="rows" [totalRecords]="totalRecords" [lazy]="true"
+      (onLazyLoad)="loadPasantesLazy($event)" responsiveLayout="scroll"
+      styleClass="p-datatable-sm p-datatable-gridlines-none" [rowHover]="true" [showCurrentPageReport]="false"
+      [rowsPerPageOptions]="[10, 25, 50]">
+
       <ng-template pTemplate="header">
-        <tr>
-          <th>Acción</th>
-          <th>Número Ficha</th>
-          <th>Nombres y Apillidos</th>
-          <th>Cédula</th>
-          <th>Teléfono</th>
+        <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider font-semibold">
+          <th style="width: 10%" class="p-4 rounded-tl-lg">Ficha</th>
+          <th style="width: 25%" class="p-4">Paciente</th>
+          <th style="width: 15%" class="p-4">Cédula</th>
+          <th style="width: 15%" class="p-4">Teléfono</th>
+          <th style="width: 35%" class="p-4 text-center rounded-tr-lg">Acciones</th>
         </tr>
       </ng-template>
+
       <ng-template pTemplate="body" let-paciente>
-        <tr>
-          <td>
-            <button
-              pButton
-              type="button"
-              label="Agendar Cita"
-              icon="pi pi-calendar-plus"
-              class="btn-primary"
-              (click)="agendarCita(paciente)"
-            ></button>
-            <button
-              pButton
-              type="button"
-              icon="pi pi-calendar"
-              class="btn-historial"
-              (click)="mostrarHistorialCitas(paciente)"
-            ></button>
+        <tr class="border-b border-gray-50 hover:bg-red-50/30 transition-colors">
+          <td class="p-4 font-bold text-gray-700">{{ paciente.id }}</td>
+          <td class="p-4 font-medium text-gray-800">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">
+                <i class="pi pi-user"></i>
+              </div>
+              {{ paciente.nombresApellidos }}
+            </div>
           </td>
-          <td>{{ paciente.id }}</td>
-          <td>{{ paciente.nombresApellidos }}</td>
-          <td>{{ paciente.cedula }}</td>
-          <td>{{ paciente.telefono }}</td>
+          <td class="p-4 text-gray-600 font-mono">{{ paciente.cedula }}</td>
+          <td class="p-4 text-gray-600">
+            <div class="flex items-center gap-1">
+              <i class="pi pi-phone text-gray-400 text-xs"></i> {{ paciente.telefono }}
+            </div>
+          </td>
+          <td class="p-4">
+            <div class="flex justify-center gap-3">
+              <button pButton label="Agendar" icon="pi pi-calendar-plus"
+                class="!bg-gradient-to-r !from-red-600 !to-red-500 !border-none !text-white !rounded-full !px-4 !py-2 !shadow-md hover:!shadow-lg hover:!-translate-y-0.5 transition-all text-xs font-bold"
+                (click)="agendarCita(paciente)"></button>
+
+              <button pButton label="Historial" icon="pi pi-history"
+                class="p-button-outlined p-button-secondary rounded-full px-4 py-2 text-xs font-bold border-gray-300 text-gray-600 hover:bg-gray-50"
+                (click)="mostrarHistorialCitas(paciente)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="p-8 text-center text-gray-500">
+            <div class="flex flex-col items-center gap-2">
+              <i class="pi pi-users text-4xl text-gray-300"></i>
+              <span>No se encontraron pacientes. Intente otra búsqueda.</span>
+            </div>
+          </td>
         </tr>
       </ng-template>
     </p-table>
-    <div class="flex justify-center items-center mb-4">
-      <!-- Dropdown para seleccionar el número de filas por página -->
-      <p class="text-sm text-gray-600">Filas por página:</p>
-      <p-dropdown
-        [options]="rowsOptions"
-        [(ngModel)]="rows"
-        (onChange)="onRowsChange($event)"
-        placeholder="Filas por página"
-        class="rows-dropdown"
-      ></p-dropdown>
-
-      <!-- Mostrar el total de registros -->
-      <div class="text-center">
-        <p class="text-sm text-gray-600">
-          Total de registros: {{ totalRecords }}
-        </p>
-      </div>
-    </div>
   </div>
 
-  <!-- Modal de Agendamiento de Citas -->
-  <p-dialog
-    header="Agendar Cita"
-    [(visible)]="displayModal"
-    [modal]="true"
-    [responsive]="true"
-    [style]="{ width: '80vw' }"
-    [contentStyle]="{ 'min-height': '80vh', overflow: 'auto' }"
-  >
-    <div *ngIf="selectedPaciente" class="p-grid p-fluid form-container">
-      <div class="p-col-12 p-md-6">
-        <div class="p-field field-with-border">
-          <label for="paciente">Paciente</label>
-          <input
-            id="paciente"
-            type="text"
-            pInputText
-            [(ngModel)]="selectedPaciente.nombresApellidos"
-            [disabled]="true"
-            class="input-field"
-          />
+  <!-- Modal de Agendamiento de Citas (LARGE MODE) -->
+  <p-dialog header="" [(visible)]="displayModal" [modal]="true"
+    [style]="{width: '95vw', 'max-width': '1400px', 'height': '90vh'}"
+    [contentStyle]="{'height': '100%', 'overflow': 'auto'}" [draggable]="false" [resizable]="false"
+    styleClass="rounded-xl overflow-hidden shadow-2xl">
+
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-600 animate-pulse-slow">
+          <i class="pi pi-calendar-plus text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 m-0">Agendar Nueva Cita</h2>
+          <p class="text-sm text-gray-500 m-0 font-normal">Complete los detalles y seleccione los horarios deseados.</p>
         </div>
       </div>
-      <div class="p-col-12 p-md-6 p-grid">
-        <div class="p-col-6">
-          <div class="p-field field-with-border">
-            <label for="especialidad">Especialidad</label>
-            <p-dropdown
-              [options]="especialidades"
-              [(ngModel)]="especialidadCita"
-              (onChange)="cargarEspecialistas($event)"
-              placeholder="Seleccione una especialidad"
-            ></p-dropdown>
+    </ng-template>
+
+    <div class="flex flex-col h-full px-2 py-4 gap-6" *ngIf="selectedPaciente">
+
+      <!-- Top Section: Patient Info -->
+      <div
+        class="bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl p-6 flex items-center gap-6 shadow-sm shrink-0">
+        <div
+          class="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-2xl">
+          {{ selectedPaciente.nombresApellidos.charAt(0) }}
+        </div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Paciente
+            Seleccionado</label>
+          <h3 class="text-2xl font-bold text-gray-800">{{ selectedPaciente.nombresApellidos }}</h3>
+          <div class="flex items-center gap-4 mt-1">
+            <span class="text-gray-500 font-mono text-sm bg-gray-100 px-2 py-0.5 rounded">CI: {{ selectedPaciente.cedula
+              }}</span>
+            <span class="text-gray-500 text-sm"><i class="pi pi-phone text-xs"></i> {{ selectedPaciente.telefono
+              }}</span>
           </div>
         </div>
-        <div class="p-col-6">
-          <div class="p-field field-with-border">
-            <label for="especialista">Especialista</label>
-            <p-dropdown
-              [options]="especialistas"
-              [(ngModel)]="especialistaCita"
-              placeholder="Seleccione un especialista"
-            ></p-dropdown>
-          </div>
-        </div>
-      </div>
-      <div class="p-col-12 p-md-6">
-        <div class="p-field field-with-border">
-          <label for="fecha">Fecha</label>
-          <p-calendar
-            [(ngModel)]="fechaCita"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            [inline]="true"
-            [minDate]="minDate"
-            class="custom-calendar"
-          ></p-calendar>
-        </div>
-      </div>
-      <div class="p-col-12 p-md-6">
-        <div class="p-field field-with-border">
-          <button
-            pButton
-            type="button"
-            label="Buscar Horas Disponibles"
-            icon="pi pi-search"
-            (click)="buscarHorasDisponibles()"
-            class="btn-search"
-          ></button>
+        <div class="hidden md:block">
+          <button pButton label="Cambiar Paciente" icon="pi pi-users" class="p-button-text p-button-sm text-gray-500"
+            (click)="displayModal=false"></button>
         </div>
       </div>
 
-      <div class="p-col-12 p-md-6">
-        <div class="p-field field-with-border">
-          <label for="hora">Hora</label>
-          <p-dropdown
-            [options]="horasDisponibles"
-            [(ngModel)]="horaCita"
-            placeholder="Seleccione una hora"
-          ></p-dropdown>
+      <!-- Detail Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-full min-h-0">
+
+        <!-- Left Column: Controls -->
+        <div class="lg:col-span-1 flex flex-col gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-100 h-fit">
+          <h4 class="font-bold text-gray-700 border-b pb-2">Configuración de Cita</h4>
+
+          <!-- Especialidad -->
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Especialidad</label>
+            <p-dropdown [options]="especialidades" [(ngModel)]="especialidadCita"
+              (onChange)="cargarEspecialistas($event)" placeholder="Seleccione Especialidad"
+              styleClass="w-full rounded-xl border border-gray-300 bg-white focus:border-red-500 py-1.5 shadow-sm"
+              [panelStyle]="{'border-radius': '12px'}"></p-dropdown>
+          </div>
+
+          <!-- Especialista -->
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Especialista</label>
+            <p-dropdown [options]="especialistas" [(ngModel)]="especialistaCita" placeholder="Seleccione Especialista"
+              styleClass="w-full rounded-xl border border-gray-300 bg-white focus:border-red-500 py-1.5 shadow-sm"
+              [panelStyle]="{'border-radius': '12px'}"></p-dropdown>
+          </div>
+
+          <!-- Fecha -->
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Fecha de Cita</label>
+            <div class="relative group">
+              <p-calendar [(ngModel)]="fechaCita" dateFormat="dd/mm/yy" [showIcon]="true" [minDate]="minDate"
+                placeholder="Seleccione Fecha" styleClass="w-full"
+                inputStyleClass="w-full rounded-l-xl border-y border-l border-gray-300 bg-white py-3 pl-4 focus:border-red-500 font-medium text-gray-700 h-[46px]"></p-calendar>
+            </div>
+          </div>
+
+          <!-- Boton Buscar -->
+          <button pButton label="Buscar Disponibilidad" icon="pi pi-search"
+            class="w-full p-button-primary rounded-xl py-3 shadow-md font-bold mt-2"
+            (click)="buscarHorasDisponibles()"></button>
+        </div>
+
+        <!-- Right Column: Time Slots Grid -->
+        <div class="lg:col-span-3 flex flex-col gap-4 min-h-[400px]">
+          <div class="flex justify-between items-center border-b pb-2">
+            <h4 class="font-bold text-gray-700 m-0">Selección de Horarios</h4>
+            <div class="flex gap-4 text-xs font-medium">
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 rounded-full bg-white border border-gray-300"></div> Disponible
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div> Seleccionado
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 rounded-full bg-gray-200"></div> Ocupado
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="horasVisuales.length > 0; else noHours"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 overflow-y-auto pr-2 pb-2">
+            <button *ngFor="let hora of horasVisuales" pButton type="button" [disabled]="hora.disabled"
+              [class.bg-red-500]="hora.selected" [class.text-white]="hora.selected"
+              [class.border-red-500]="hora.selected" [class.bg-white]="!hora.selected && !hora.disabled"
+              [class.text-gray-700]="!hora.selected && !hora.disabled" [class.bg-gray-100]="hora.disabled"
+              [class.text-gray-400]="hora.disabled" [class.cursor-not-allowed]="hora.disabled"
+              class="p-4 rounded-xl border transition-all duration-200 flex flex-col items-center justify-center gap-1 h-24 hover:shadow-md relative"
+              (click)="toggleHora(hora)">
+
+              <span class="text-xl font-bold">{{ hora.label }}</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest"
+                *ngIf="!hora.disabled && !hora.selected">Disponible</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-white"
+                *ngIf="hora.selected">Seleccionado</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400"
+                *ngIf="hora.disabled">Ocupado</span>
+
+              <i class="pi pi-check-circle absolute top-2 right-2 text-white" *ngIf="hora.selected"></i>
+              <i class="pi pi-lock absolute top-2 right-2 text-gray-300" *ngIf="hora.disabled"></i>
+            </button>
+          </div>
+
+          <ng-template #noHours>
+            <div
+              class="h-full flex flex-col items-center justify-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 text-gray-400">
+              <i class="pi pi-calendar-times text-4xl mb-2"></i>
+              <p>Seleccione un especialista y fecha para ver horarios.</p>
+            </div>
+          </ng-template>
+
+          <!-- Selection Summary -->
+          <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mt-auto flex justify-between items-center"
+            *ngIf="horaCita.length > 0">
+            <div>
+              <span class="text-xs font-bold text-blue-600 uppercase block">Horas Seleccionadas</span>
+              <div class="font-bold text-gray-800 text-lg">
+                {{ horaCita.length }} hora(s): {{ horaCita.join(', ') }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="p-col-12 buttons-container">
-        <button
-          pButton
-          type="button"
-          (click)="guardarCita()"
-          label="Guardar"
-          icon="pi pi-check"
-          class="btn-save"
-        ></button>
-        <button
-          pButton
-          type="button"
-          label="Cancelar"
-          icon="pi pi-times"
-          class="p-button-secondary btn-cancel"
-          (click)="displayModal = false"
-        ></button>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+        <button pButton label="Cancelar" icon="pi pi-times"
+          class="p-button-text p-button-secondary hover:bg-gray-100 text-gray-600 rounded-xl px-6 py-3"
+          (click)="displayModal = false"></button>
+
+        <button pButton label="Confirmar Citas ({{horaCita.length}})" icon="pi pi-check"
+          [disabled]="horaCita.length === 0"
+          class="!bg-gradient-to-r !from-red-600 !to-red-500 !border-none !text-white !rounded-full !px-8 !py-3 !shadow-lg !shadow-red-500/30 hover:!shadow-red-500/50 hover:!-translate-y-0.5 transition-all transform font-bold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+          (click)="guardarCita()"></button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Include other dialogs (Historial, Certificado) unchanged structure-wise but ensure they still work -->
+  <!-- Simplified inclusion for brevity if needed, but safe to overwrite if structure is maintained -->
+  <!-- Since I am replacing the whole file, I must include the rest -->
+  <p-dialog header="" [(visible)]="displayHistorial" [modal]="true" [style]="{width: '80vw', 'max-width': '1100px'}"
+    [draggable]="false" [resizable]="false" styleClass="rounded-xl overflow-hidden shadow-2xl">
+
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+          <i class="pi pi-history text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-gray-800 m-0">Historial de Citas</h2>
+          <p class="text-sm text-gray-500 m-0 font-normal">Registro de atenciones del paciente</p>
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="px-1 py-4">
+      <p-table [value]="historialCitas" [paginator]="true" [rows]="rowsHistorial" [totalRecords]="totalRecordsHistorial"
+        [lazy]="true" (onLazyLoad)="loadCitasHistorial($event)" responsiveLayout="scroll"
+        styleClass="p-datatable-sm p-datatable-gridlines-none" [rowHover]="true">
+
+        <ng-template pTemplate="header">
+          <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider font-semibold">
+            <th class="p-3">Fecha</th>
+            <th class="p-3">Hora</th>
+            <th class="p-3">Especialidad</th>
+            <th class="p-3">Especialista</th>
+            <th class="p-3 text-center">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-cita>
+          <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors text-sm">
+            <td class="p-3 font-medium text-gray-800">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-calendar text-gray-400"></i>
+                {{ cita.fecha | date : "yyyy-MM-dd" }}
+              </div>
+            </td>
+            <td class="p-3 text-gray-600">{{ cita.horainicio }}</td>
+            <td class="p-3">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
+                {{ cita.nombreArea }}
+              </span>
+            </td>
+            <td class="p-3 text-gray-700">{{ cita.nombres }} {{ cita.apellidos }}</td>
+            <td class="p-3 text-center">
+              <button pButton icon="pi pi-file-pdf" label="Certificado"
+                class="p-button-rounded p-button-outlined p-button-info p-button-sm text-xs"
+                (click)="generarCertificadoAtencion(cita)"></button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="p-8 text-center text-gray-500">
+              <div class="flex flex-col items-center gap-2">
+                <i class="pi pi-inbox text-4xl text-gray-200"></i>
+                <span>No hay historial de citas.</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <div class="flex justify-end mt-4">
+        <button pButton label="Imprimir Reporte Completo" icon="pi pi-print"
+          class="p-button-outlined p-button-secondary rounded-xl" (click)="imprimirHistorial()"></button>
       </div>
     </div>
   </p-dialog>
 
-  <!-- Modal de Historial de Citas -->
-  <p-dialog
-    header="Historial de Citas"
-    [(visible)]="displayHistorial"
-    [modal]="true"
-    [responsive]="true"
-    [style]="{ width: '80vw' }"
-    [contentStyle]="{ 'min-height': '80vh', overflow: 'auto' }"
-  >
-    <div class="p-grid p-fluid">
-      <div class="p-col-12">
-        <p-table
-          [value]="historialCitas"
-          [paginator]="true"
-          [rows]="rowsHistorial"
-          [totalRecords]="totalRecordsHistorial"
-          [lazy]="true"
-          (onLazyLoad)="loadCitasHistorial($event)"
-          responsiveLayout="scroll"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Especialidad</th>
-              <th>Especialista</th>
-              <th>Certificado</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-cita>
-            <tr>
-              <td>{{ cita.fecha | date : "yyyy-MM-dd" }}</td>
-              <td>{{ cita.horainicio }}</td>
-              <td>{{ cita.nombreArea }}</td>
-              <td>{{ cita.nombres }} {{ cita.apellidos }}</td>
-              <td>
-                <button
-                  pButton
-                  type="button"
-                  icon="pi pi-calendar-plus"
-                  class="btn-primary"
-                  (click)="generarCertificadoAtencion(cita)"
-                ></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-        <div class="flex justify-center items-center mb-4">
-          <!-- Dropdown para seleccionar el número de filas por página -->
-          <p class="text-sm text-gray-600">Filas por página:</p>
-          <p-dropdown
-            [options]="rowsOptionsHistorial"
-            [(ngModel)]="rowsHistorial"
-            (onChange)="onRowsChangeHistorial($event)"
-            placeholder="Filas por página"
-            class="rows-dropdown"
-          ></p-dropdown>
+  <p-dialog header="Certificado de Atención" [(visible)]="displayCertificado" [modal]="true"
+    [style]="{width: '600px', 'max-width': '90vw'}" styleClass="rounded-xl shadow-2xl">
+    <div *ngIf="certificadoPaciente" class="flex flex-col gap-4 p-4">
+      <div class="text-center pb-4 border-b border-gray-100">
+        <h3 class="text-xl font-serif font-bold text-gray-800">CERTIFICADO DE ATENCIÓN</h3>
+        <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">UDIPSAI</p>
+      </div>
 
-          <!-- Mostrar el total de registros -->
-          <div class="text-center">
-            <p class="text-sm text-gray-600">
-              Total de registros: {{ totalRecordsHistorial }}
-            </p>
+      <div class="grid grid-cols-1 gap-4 text-sm">
+        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+          <label class="text-xs font-bold text-gray-400 uppercase block mb-1">Paciente</label>
+          <div class="font-bold text-lg text-gray-800">{{certificadoPaciente.nombre}}</div>
+          <div class="text-gray-500">Ficha: {{certificadoPaciente.numeroFicha}}</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-bold text-gray-400 uppercase block mb-1">Fecha</label>
+            <div class="font-medium text-gray-700">{{certificadoPaciente.fechaConsulta}}</div>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-gray-400 uppercase block mb-1">Área</label>
+            <div class="font-medium text-gray-700">{{certificadoPaciente.area}}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 bg-red-50 p-3 rounded-lg border border-red-100">
+          <div>
+            <label class="text-xs font-bold text-red-400 uppercase block mb-1">Hora Inicio</label>
+            <div class="font-bold text-red-700">{{certificadoPaciente.horaDesde}}</div>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-red-400 uppercase block mb-1">Hora Fin</label>
+            <div class="font-bold text-red-700">{{certificadoPaciente.horaHasta}}</div>
           </div>
         </div>
       </div>
-      <div class="p-col-12 buttons-container">
-        <button
-          pButton
-          type="button"
-          label="Imprimir"
-          icon="pi pi-print"
-          (click)="imprimirHistorial()"
-          class="btn-print"
-        ></button>
+
+      <div class="mt-8 text-center">
+        <div class="w-48 mx-auto border-t border-gray-300 pt-2"></div>
+        <p class="text-xs font-bold text-gray-500 uppercase">Firma y Sello</p>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <button pButton label="Cerrar" icon="pi pi-times" class="p-button-text p-button-secondary rounded-lg"
+          (click)="displayCertificado = false"></button>
+        <button pButton label="Imprimir" icon="pi pi-print" class="p-button-danger rounded-lg shadow-md"
+          (click)="imprimirCertificado()"></button>
       </div>
     </div>
   </p-dialog>
+
 </div>
-
-<!-- Modal de Certificado -->
-<p-dialog
-  header="Certificado de Atención"
-  [(visible)]="displayCertificado"
-  [modal]="true"
-  [responsive]="true"
-  [style]="{ width: '50vw' }"
-  [contentStyle]="{ 'min-height': '50vh', overflow: 'auto' }"
->
-  <div *ngIf="certificadoPaciente" class="p-grid p-fluid form-container">
-    <div class="p-col-12 text-center">
-      <img
-        src="assets/logo_UDIPS.png"
-        alt="Logo UDIPS"
-        style="width: 300px; height: auto; margin-bottom: 20px"
-      />
-    </div>
-    <div class="p-col-12">
-      <div class="p-field field-with-border">
-        <label for="area">ATENCIÓN EN EL ÁREA:</label>
-        <input
-          id="area"
-          type="text"
-          pInputText
-          [(ngModel)]="certificadoPaciente.area"
-          [disabled]="true"
-          class="input-field"
-        />
-      </div>
-    </div>
-    <div class="p-col-12">
-      <div class="p-field field-with-border">
-        <label for="nombre">Paciente:</label>
-        <input
-          id="nombre"
-          type="text"
-          pInputText
-          [(ngModel)]="certificadoPaciente.nombre"
-          [disabled]="true"
-          class="input-field"
-        />
-      </div>
-    </div>
-    <div class="p-col-12">
-      <div class="p-field field-with-border">
-        <label for="numeroFicha">Número Ficha:</label>
-        <input
-          id="numeroFicha"
-          type="text"
-          pInputText
-          [(ngModel)]="certificadoPaciente.numeroFicha"
-          [disabled]="true"
-          class="input-field"
-        />
-      </div>
-    </div>
-    <div class="p-col-12">
-      <div class="p-field field-with-border">
-        <label for="fechaConsulta">Día de la consulta:</label>
-        <input
-          id="fechaConsulta"
-          type="text"
-          pInputText
-          [(ngModel)]="certificadoPaciente.fechaConsulta"
-          [disabled]="true"
-          class="input-field"
-        />
-      </div>
-    </div>
-    <div class="p-col-6">
-      <div class="p-field field-with-border">
-        <label for="horaDesde">HORA: DESDE</label>
-        <input
-          id="horaDesde"
-          type="text"
-          pInputText
-          [(ngModel)]="certificadoPaciente.horaDesde"
-          [disabled]="true"
-          class="input-field"
-        />
-      </div>
-    </div>
-    <div class="p-col-6">
-      <div class="p-field field-with-border">
-        <label for="horaHasta">HASTA</label>
-        <input
-          id="horaHasta"
-          type="text"
-          pInputText
-          [(ngModel)]="certificadoPaciente.horaHasta"
-          [disabled]="true"
-          class="input-field"
-        />
-      </div>
-    </div>
-
-    <div class="container2"></div>
-
-    <div class="p-col-12 text-center">
-      <p>FIRMA Y SELLO<br />UDIPSAI</p>
-    </div>
-    <div class="p-col-12 buttons-container">
-      <button
-        pButton
-        type="button"
-        label="Imprimir"
-        icon="pi pi-print"
-        (click)="imprimirCertificado()"
-        class="btn-print"
-      ></button>
-      <button
-        pButton
-        type="button"
-        label="Cerrar"
-        icon="pi pi-times"
-        class="p-button-secondary btn-cancel"
-        (click)="displayCertificado = false"
-      ></button>
-    </div>
-  </div>
-</p-dialog>

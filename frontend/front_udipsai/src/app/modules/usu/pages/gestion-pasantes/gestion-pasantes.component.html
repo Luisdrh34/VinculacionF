@@ -12,7 +12,7 @@
     <!-- Action Buttons -->
     <div class="flex gap-3">
       <button pButton label="Nuevo Pasante" icon="pi pi-plus"
-        class="p-button-rounded p-button-danger shadow-md hover:shadow-lg transition-all"
+        class="!bg-gradient-to-r !from-red-600 !to-red-500 !border-none !text-white !rounded-full !px-6 !py-3 !shadow-lg !shadow-red-500/30 hover:!shadow-red-500/50 hover:!-translate-y-0.5 transition-all transform font-bold tracking-wide"
         (click)="mostrarDialogoAgregar()"></button>
     </div>
   </div>
@@ -26,7 +26,7 @@
         <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         <input type="text" pInputText [(ngModel)]="searchTerm" (input)="filterPasantes()"
           placeholder="Buscar por cédula, nombre..."
-          class="w-full pl-10 pr-4 py-2 rounded-xl border-gray-200 focus:border-red-500 focus:ring-red-100 transition-all font-medium text-gray-700 bg-white shadow-sm" />
+          class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-red-100 transition-all font-medium text-gray-700 bg-white shadow-sm" />
       </div>
 
       <div class="flex items-center gap-2 text-sm text-gray-500">
@@ -156,136 +156,238 @@
   </p-dialog>
 
   <!-- Dialogo de Agregar Pasante -->
-  <p-dialog header="Registrar Nuevo Pasante" [(visible)]="displayAgregar" [modal]="true" [style]="{width: '500px'}"
+  <p-dialog header="" [(visible)]="displayAgregar" [modal]="true" [style]="{width: '70vw', 'max-width': '1000px'}"
     [draggable]="false" [resizable]="false" styleClass="rounded-xl overflow-hidden shadow-2xl">
 
-    <div class="flex flex-col gap-5 pt-4">
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Cédula</label>
-        <div class="relative">
-          <i class="pi pi-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText [(ngModel)]="nuevoPasante.cedula"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+          <i class="pi pi-user-plus text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-gray-800 m-0">Nuevo Pasante</h2>
+          <p class="text-xs text-gray-500 m-0 font-normal">Complete la información para registrar un pasante</p>
         </div>
       </div>
+    </ng-template>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label class="text-xs font-bold text-gray-600 uppercase">Nombres</label>
-          <input pInputText [(ngModel)]="nuevoPasante.nombres"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+    <div class="px-1 py-4">
+      <h2 class="text-base font-bold text-gray-800 mb-6 pb-2 border-b border-gray-100 flex items-center gap-2">
+        <i class="pi pi-briefcase text-red-500"></i> Información Académica y Personal
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Cédula -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Cédula</label>
+          <div class="relative group">
+            <i
+              class="pi pi-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="nuevoPasante.cedula" placeholder="Ej: 0102030405" maxlength="10"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
         </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-xs font-bold text-gray-600 uppercase">Apellidos</label>
-          <input pInputText [(ngModel)]="nuevoPasante.apellidos"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+
+        <!-- Nombres -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Nombres</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="nuevoPasante.nombres" placeholder="Nombres completos"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
         </div>
+
+        <!-- Apellidos -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Apellidos</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="nuevoPasante.apellidos" placeholder="Apellidos completos"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Carrera -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Carrera</label>
+          <div class="relative group">
+            <i
+              class="pi pi-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="nuevoPasante.carrera" placeholder="Ej: Psicología Clínica"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Área Asignada -->
+        <div class="flex flex-col gap-2 md:col-span-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Área Asignada</label>
+          <p-multiSelect [options]="areas" [(ngModel)]="nuevoPasante.areas" optionLabel="nombre"
+            placeholder="Seleccionar Áreas de Práctica"
+            styleClass="w-full rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 py-1.5 shadow-sm"
+            [panelStyle]="{'border-radius': '12px', 'overflow': 'hidden', 'box-shadow': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'}"
+            display="chip">
+          </p-multiSelect>
+        </div>
+
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Área Asignada</label>
-        <p-multiSelect [options]="areas" [(ngModel)]="nuevoPasante.areas" optionLabel="nombre"
-          placeholder="Seleccionar Áreas" styleClass="w-full rounded-lg border-gray-300" display="chip"></p-multiSelect>
-      </div>
+      <h2 class="text-base font-bold text-gray-800 mt-8 mb-6 pb-2 border-b border-gray-100 flex items-center gap-2">
+        <i class="pi pi-envelope text-red-500"></i> Información de Contacto
+      </h2>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Carrera</label>
-        <div class="relative">
-          <i class="pi pi-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText [(ngModel)]="nuevoPasante.carrera"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Email -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Correo Institucional</label>
+          <div class="relative group">
+            <i
+              class="pi pi-at absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText type="email" [(ngModel)]="nuevoPasante.email" placeholder="ejemplo@ucacue.edu.ec"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
         </div>
-      </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Email</label>
-        <div class="relative">
-          <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText type="email" [(ngModel)]="nuevoPasante.email"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Teléfono</label>
-        <div class="relative">
-          <i class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText [(ngModel)]="nuevoPasante.celular"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+        <!-- Teléfono -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Teléfono Móvil</label>
+          <div class="relative group">
+            <i
+              class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="nuevoPasante.celular" placeholder="09XXXXXXXX" maxlength="10"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
         </div>
       </div>
     </div>
 
     <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2 pt-4">
-        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+      <div class="flex justify-end gap-3 pt-6 pb-2 border-t border-gray-100 mt-4">
+        <button pButton label="Cancelar" icon="pi pi-times"
+          class="p-button-text p-button-secondary hover:bg-gray-100 text-gray-600 rounded-xl px-6 py-3"
           (click)="displayAgregar = false"></button>
-        <button pButton label="Guardar" icon="pi pi-check" class="p-button-danger rounded-lg px-6"
+        <button pButton label="Registrar Pasante" icon="pi pi-check"
+          class="p-button-danger rounded-xl px-8 py-3 shadow-lg hover:shadow-red-500/30 transition-all font-bold"
           (click)="agregarPasante()"></button>
       </div>
     </ng-template>
   </p-dialog>
 
   <!-- Dialogo de Editar Pasante -->
-  <p-dialog header="Editar Pasante" [(visible)]="editandoPasante" [modal]="true" [style]="{width: '500px'}"
+  <p-dialog header="" [(visible)]="editandoPasante" [modal]="true" [style]="{width: '70vw', 'max-width': '1000px'}"
     [draggable]="false" [resizable]="false" styleClass="rounded-xl overflow-hidden shadow-2xl">
 
-    <div class="flex flex-col gap-5 pt-4">
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-500 uppercase">Cédula</label>
-        <div class="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{{
-          pacienteEditando.cedula }}</div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label class="text-xs font-bold text-gray-600 uppercase">Nombres</label>
-          <input pInputText [(ngModel)]="pacienteEditando.nombres"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+          <i class="pi pi-user-edit text-xl"></i>
         </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-xs font-bold text-gray-600 uppercase">Apellidos</label>
-          <input pInputText [(ngModel)]="pacienteEditando.apellidos"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+        <div>
+          <h2 class="text-lg font-bold text-gray-800 m-0">Editar Pasante</h2>
+          <p class="text-xs text-gray-500 m-0 font-normal">Modifique la información del pasante seleccionado</p>
         </div>
       </div>
+    </ng-template>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Áreas</label>
-        <p-multiSelect [options]="areas" [(ngModel)]="pacienteEditando.areas" optionLabel="nombre"
-          placeholder="Selecciona Áreas" styleClass="w-full rounded-lg border-gray-300" display="chip"></p-multiSelect>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Carrera</label>
-        <input pInputText [(ngModel)]="pacienteEditando.carrera"
-          class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Email</label>
-        <div class="relative">
-          <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText [(ngModel)]="pacienteEditando.email"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+    <div class="px-1 py-4">
+      <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 flex items-start gap-3">
+        <i class="pi pi-info-circle text-blue-500 text-xl mt-0.5"></i>
+        <div>
+          <h4 class="font-bold text-blue-800 text-sm m-0 mb-1">Modo Edición</h4>
+          <p class="text-xs text-blue-600 m-0">Estás editando la información de un pasante existente. La cédula no se
+            puede modificar.</p>
         </div>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Teléfono</label>
-        <div class="relative">
-          <i class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText [(ngModel)]="pacienteEditando.celular"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Cédula (Disabled) -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Cédula</label>
+          <div class="relative">
+            <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+            <div
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-gray-100 text-gray-500 font-mono font-medium flex items-center h-[50px] shadow-sm">
+              {{ pacienteEditando.cedula }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Nombres -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Nombres</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="pacienteEditando.nombres"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Apellidos -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Apellidos</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="pacienteEditando.apellidos"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Carrera -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Carrera</label>
+          <div class="relative group">
+            <i
+              class="pi pi-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="pacienteEditando.carrera"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Áreas -->
+        <div class="flex flex-col gap-2 md:col-span-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Áreas Asignadas</label>
+          <p-multiSelect [options]="areas" [(ngModel)]="pacienteEditando.areas" optionLabel="nombre"
+            placeholder="Selecciona Áreas"
+            styleClass="w-full rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 py-1.5 shadow-sm"
+            [panelStyle]="{'border-radius': '12px'}" display="chip"></p-multiSelect>
+        </div>
+
+        <!-- Contacto -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Email</label>
+          <div class="relative group">
+            <i
+              class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="pacienteEditando.email"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Teléfono</label>
+          <div class="relative group">
+            <i
+              class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText [(ngModel)]="pacienteEditando.celular"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
         </div>
       </div>
     </div>
 
     <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2 pt-4">
-        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+      <div class="flex justify-end gap-3 pt-6 pb-2 border-t border-gray-100 mt-4">
+        <button pButton label="Cancelar" icon="pi pi-times"
+          class="p-button-text p-button-secondary hover:bg-gray-100 text-gray-600 rounded-xl px-6 py-3"
           (click)="editandoPasante = false"></button>
-        <button pButton label="Guardar Cambios" icon="pi pi-check" class="p-button-danger rounded-lg px-6"
+        <button pButton label="Guardar Cambios" icon="pi pi-check"
+          class="p-button-danger rounded-xl px-8 py-3 shadow-lg hover:shadow-red-500/30 transition-all font-bold"
           (click)="editarPasante()"></button>
       </div>
     </ng-template>

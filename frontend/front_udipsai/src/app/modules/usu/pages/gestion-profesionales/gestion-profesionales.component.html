@@ -13,7 +13,7 @@
     <!-- Action Buttons -->
     <div class="flex gap-3">
       <button pButton label="Nuevo Profesional" icon="pi pi-plus"
-        class="p-button-rounded p-button-danger shadow-md hover:shadow-lg transition-all"
+        class="!bg-gradient-to-r !from-red-600 !to-red-500 !border-none !text-white !rounded-full !px-6 !py-3 !shadow-lg !shadow-red-500/30 hover:!shadow-red-500/50 hover:!-translate-y-0.5 transition-all transform font-bold tracking-wide"
         (click)="agregarDoctor()"></button>
     </div>
   </div>
@@ -27,7 +27,7 @@
         <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         <input type="text" pInputText [(ngModel)]="searchTerm" (input)="loadProfesionales()"
           placeholder="Buscar por cédula, nombre o apellido..."
-          class="w-full pl-10 pr-4 py-2 rounded-xl border-gray-200 focus:border-red-500 focus:ring-red-100 transition-all font-medium text-gray-700 bg-white shadow-sm" />
+          class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:border-red-500 focus:ring-red-100 transition-all font-medium text-gray-700 bg-white shadow-sm" />
       </div>
 
       <div class="flex items-center gap-2 text-sm text-gray-500">
@@ -115,146 +115,236 @@
       </ng-template>
     </p-table>
 
-    <!-- Paginator Footer Style override done via global css or specific styles if needed, minimal here -->
+    <!-- Paginator Footer -->
     <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end">
     </div>
   </div>
 
   <!-- Modal EDITAR -->
-  <p-dialog header="Editar Profesional" [(visible)]="displayEditModal" [modal]="true" [style]="{width: '500px'}"
+  <p-dialog header="" [(visible)]="displayEditModal" [modal]="true" [style]="{width: '70vw', 'max-width': '1000px'}"
     [draggable]="false" [resizable]="false" styleClass="rounded-xl overflow-hidden shadow-2xl">
 
-    <div class="flex flex-col gap-5 pt-4">
-      <!-- Cédula (Readonly) -->
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-500 uppercase">Cédula de Identidad</label>
-        <div class="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 font-mono">{{
-          editDoctor.cedula }}</div>
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+          <i class="pi pi-user-edit text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-gray-800 m-0">Editar Profesional</h2>
+          <p class="text-xs text-gray-500 m-0 font-normal">Modifique la información del profesional seleccionado</p>
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="px-1 py-4">
+      <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 flex items-start gap-3">
+        <i class="pi pi-info-circle text-blue-500 text-xl mt-0.5"></i>
+        <div>
+          <h4 class="font-bold text-blue-800 text-sm m-0 mb-1">Modo Edición</h4>
+          <p class="text-xs text-blue-600 m-0">Estás editando la información de un profesional existente. La cédula no
+            se puede modificar.</p>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="nombres" class="text-xs font-bold text-gray-600 uppercase">Nombres</label>
-          <input pInputText id="nombres" [(ngModel)]="editDoctor.nombres" (input)="validarTexto($event)"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 focus:ring focus:ring-red-200 transition-all text-sm" />
+      <!-- Cédula (Readonly) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-2">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Cédula de Identidad</label>
+          <div class="relative">
+            <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+            <div
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-gray-100 text-gray-500 font-mono font-medium flex items-center h-[50px] shadow-sm">
+              {{ editDoctor.cedula }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <div class="flex flex-col gap-2">
+          <label for="nombres" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Nombres</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="nombres" [(ngModel)]="editDoctor.nombres" (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
           <small *ngIf="formSubmitted && editDoctor.nombres.trim() === ''"
             class="text-red-500 text-xs">Requerido.</small>
         </div>
-        <div class="flex flex-col gap-1">
-          <label for="apellidos" class="text-xs font-bold text-gray-600 uppercase">Apellidos</label>
-          <input pInputText id="apellidos" [(ngModel)]="editDoctor.apellidos" (input)="validarTexto($event)"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 focus:ring focus:ring-red-200 transition-all text-sm" />
+
+        <div class="flex flex-col gap-2">
+          <label for="apellidos" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Apellidos</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="apellidos" [(ngModel)]="editDoctor.apellidos" (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
           <small *ngIf="formSubmitted && editDoctor.apellidos.trim() === ''"
             class="text-red-500 text-xs">Requerido.</small>
         </div>
-      </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Área / Especialidad</label>
-        <p-multiSelect [options]="areas" [(ngModel)]="editDoctor.areas" optionLabel="nombre"
-          placeholder="Seleccionar Áreas" styleClass="w-full rounded-lg border-gray-300" display="chip"></p-multiSelect>
-        <small *ngIf="formSubmitted && !editDoctor.areas" class="text-red-500 text-xs">Requerido.</small>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="email" class="text-xs font-bold text-gray-600 uppercase">Correo Electrónico</label>
-        <div class="relative">
-          <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText id="email" [(ngModel)]="editDoctor.email"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Área / Especialidad</label>
+          <p-multiSelect [options]="areas" [(ngModel)]="editDoctor.areas" optionLabel="nombre"
+            placeholder="Seleccionar Áreas"
+            styleClass="w-full rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 py-1.5 shadow-sm"
+            [panelStyle]="{'border-radius': '12px'}" display="chip"></p-multiSelect>
+          <small *ngIf="formSubmitted && !editDoctor.areas" class="text-red-500 text-xs">Requerido.</small>
         </div>
-        <small *ngIf="formSubmitted && (!correoValido(editDoctor.email) || editDoctor.email.trim() === '')"
-          class="text-red-500 text-xs">Correo inválido o vacío.</small>
-      </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="celular" class="text-xs font-bold text-gray-600 uppercase">Teléfono Móvil</label>
-        <div class="relative">
-          <i class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText id="celular" [(ngModel)]="editDoctor.celular" (input)="validarTelefono($event)"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+        <div class="flex flex-col gap-2">
+          <label for="email" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Correo Electrónico</label>
+          <div class="relative group">
+            <i
+              class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="email" [(ngModel)]="editDoctor.email"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+          <small *ngIf="formSubmitted && (!correoValido(editDoctor.email) || editDoctor.email.trim() === '')"
+            class="text-red-500 text-xs">Correo inválido o vacío.</small>
         </div>
-        <small *ngIf="formSubmitted && (!telefonoValido(editDoctor.celular) || editDoctor.celular.trim() === '')"
-          class="text-red-500 text-xs">Teléfono inválido (10 dígitos).</small>
+
+        <div class="flex flex-col gap-2">
+          <label for="celular" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Teléfono Móvil</label>
+          <div class="relative group">
+            <i
+              class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="celular" [(ngModel)]="editDoctor.celular" (input)="validarTelefono($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+          <small *ngIf="formSubmitted && (!telefonoValido(editDoctor.celular) || editDoctor.celular.trim() === '')"
+            class="text-red-500 text-xs">Teléfono inválido (10 dígitos).</small>
+        </div>
       </div>
     </div>
 
     <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2 pt-4">
-        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+      <div class="flex justify-end gap-3 pt-6 pb-2 border-t border-gray-100 mt-4">
+        <button pButton label="Cancelar" icon="pi pi-times"
+          class="p-button-text p-button-secondary hover:bg-gray-100 text-gray-600 rounded-xl px-6 py-3"
           (click)="displayEditModal = false"></button>
-        <button pButton label="Guardar Cambios" icon="pi pi-check" class="p-button-danger rounded-lg px-6"
+        <button pButton label="Guardar Cambios" icon="pi pi-check"
+          class="p-button-danger rounded-xl px-8 py-3 shadow-lg hover:shadow-red-500/30 transition-all font-bold"
           (click)="guardarDoctorEditado()"></button>
       </div>
     </ng-template>
   </p-dialog>
 
   <!-- Modal AGREGAR -->
-  <p-dialog header="Nuevo Profesional" [(visible)]="displayAgregarModal" [modal]="true" [style]="{width: '500px'}"
+  <p-dialog header="" [(visible)]="displayAgregarModal" [modal]="true" [style]="{width: '70vw', 'max-width': '1000px'}"
     [draggable]="false" [resizable]="false" styleClass="rounded-xl overflow-hidden shadow-2xl">
 
-    <div class="flex flex-col gap-5 pt-4">
-      <div class="flex flex-col gap-1">
-        <label for="cedula_new" class="text-xs font-bold text-gray-600 uppercase">Cédula de Identidad</label>
-        <div class="relative">
-          <i class="pi pi-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText id="cedula_new" [(ngModel)]="nuevoDoctor.cedula"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm"
-            placeholder="Ej: 0102030405" />
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+          <i class="pi pi-user-plus text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-gray-800 m-0">Nuevo Profesional</h2>
+          <p class="text-xs text-gray-500 m-0 font-normal">Complete la información para registrar un profesional</p>
         </div>
       </div>
+    </ng-template>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="nombres_new" class="text-xs font-bold text-gray-600 uppercase">Nombres</label>
-          <input pInputText id="nombres_new" [(ngModel)]="nuevoDoctor.nombres" (input)="validarTexto($event)"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+    <div class="px-1 py-4">
+      <h2 class="text-base font-bold text-gray-800 mb-6 pb-2 border-b border-gray-100 flex items-center gap-2">
+        <i class="pi pi-file-edit text-red-500"></i> Datos Generales
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="cedula_new" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Cédula de
+            Identidad</label>
+          <div class="relative group">
+            <i
+              class="pi pi-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="cedula_new" [(ngModel)]="nuevoDoctor.cedula"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              placeholder="Ej: 0102030405" />
+          </div>
+          <small *ngIf="formSubmitted && (nuevoDoctor.cedula.trim() == '' || nuevoDoctor.cedula.length !== 10)"
+            class="text-red-500 text-xs">Requerido (10 dígitos).</small>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="nombres_new" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Nombres</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="nombres_new" [(ngModel)]="nuevoDoctor.nombres" (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
           <small *ngIf="formSubmitted && (nuevoDoctor.nombres.trim() == '' || !textoValido(nuevoDoctor.nombres))"
             class="text-red-500 text-xs">Inválido.</small>
         </div>
-        <div class="flex flex-col gap-1">
-          <label for="apellidos_new" class="text-xs font-bold text-gray-600 uppercase">Apellidos</label>
-          <input pInputText id="apellidos_new" [(ngModel)]="nuevoDoctor.apellidos" (input)="validarTexto($event)"
-            class="w-full px-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+
+        <div class="flex flex-col gap-2">
+          <label for="apellidos_new" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Apellidos</label>
+          <div class="relative group">
+            <i
+              class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="apellidos_new" [(ngModel)]="nuevoDoctor.apellidos" (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
           <small *ngIf="formSubmitted && (nuevoDoctor.apellidos.trim() == '' || !textoValido(nuevoDoctor.apellidos))"
             class="text-red-500 text-xs">Inválido.</small>
         </div>
-      </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-600 uppercase">Área / Especialidad</label>
-        <p-multiSelect [options]="areas" [(ngModel)]="nuevoDoctor.areas" optionLabel="nombre"
-          placeholder="Seleccionar Áreas" styleClass="w-full rounded-lg border-gray-300" display="chip"></p-multiSelect>
-        <small *ngIf="formSubmitted && !nuevoDoctor.areas" class="text-red-500 text-xs">Requerido.</small>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="email_new" class="text-xs font-bold text-gray-600 uppercase">Correo Electrónico</label>
-        <div class="relative">
-          <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText id="email_new" type="email" [(ngModel)]="nuevoDoctor.email"
-            class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Área / Especialidad</label>
+          <p-multiSelect [options]="areas" [(ngModel)]="nuevoDoctor.areas" optionLabel="nombre"
+            placeholder="Seleccionar Áreas"
+            styleClass="w-full rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 py-1.5 shadow-sm"
+            [panelStyle]="{'border-radius': '12px'}" display="chip"></p-multiSelect>
+          <small *ngIf="formSubmitted && (!nuevoDoctor.areas || nuevoDoctor.areas.length === 0)"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
-        <small *ngIf="formSubmitted && !correoValido(nuevoDoctor.email)" class="text-red-500 text-xs">Inválido.</small>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="celular_new" class="text-xs font-bold text-gray-600 uppercase">Teléfono Móvil</label>
-        <div class="relative">
-          <i class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input pInputText id="celular_new" [(ngModel)]="nuevoDoctor.celular" (input)="validarTelefono($event)"
-            maxlength="10" class="w-full pl-10 pr-3 py-2 rounded-lg border-gray-300 focus:border-red-500 text-sm" />
+      <h2 class="text-base font-bold text-gray-800 mt-8 mb-6 pb-2 border-b border-gray-100 flex items-center gap-2">
+        <i class="pi pi-address-book text-red-500"></i> Información de Contacto
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="email_new" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Correo
+            Electrónico</label>
+          <div class="relative group">
+            <i
+              class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="email_new" type="email" [(ngModel)]="nuevoDoctor.email"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+          <small *ngIf="formSubmitted && !correoValido(nuevoDoctor.email)"
+            class="text-red-500 text-xs">Inválido.</small>
         </div>
-        <small *ngIf="formSubmitted && !telefonoValido(nuevoDoctor.celular)" class="text-red-500 text-xs">Debe tener 10
-          dígitos (09...)</small>
+
+        <div class="flex flex-col gap-2">
+          <label for="celular_new" class="text-xs font-bold text-gray-600 uppercase tracking-wide">Teléfono
+            Móvil</label>
+          <div class="relative group">
+            <i
+              class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
+            <input pInputText id="celular_new" [(ngModel)]="nuevoDoctor.celular" (input)="validarTelefono($event)"
+              maxlength="10"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+          </div>
+          <small *ngIf="formSubmitted && !telefonoValido(nuevoDoctor.celular)" class="text-red-500 text-xs">Debe tener
+            10
+            dígitos (09...)</small>
+        </div>
       </div>
     </div>
 
     <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2 pt-4">
-        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+      <div class="flex justify-end gap-3 pt-6 pb-2 border-t border-gray-100 mt-4">
+        <button pButton label="Cancelar" icon="pi pi-times"
+          class="p-button-text p-button-secondary hover:bg-gray-100 text-gray-600 rounded-xl px-6 py-3"
           (click)="cancelarAgregar()"></button>
-        <button pButton label="Guardar Profesional" icon="pi pi-check" class="p-button-danger rounded-lg px-6"
+        <button pButton label="Guardar Profesional" icon="pi pi-check"
+          class="p-button-danger rounded-xl px-8 py-3 shadow-lg hover:shadow-red-500/30 transition-all font-bold"
           (click)="guardarNuevoDoctor()"></button>
       </div>
     </ng-template>

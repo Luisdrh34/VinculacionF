@@ -1,6 +1,5 @@
 package com.udipsai.backend.usuarios.service;
 
-
 import com.udipsai.backend.common.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -171,37 +171,56 @@ public class PasanteService {
                             "Pasante ya existe con cedula " + usuario.getCedula() + " o email "
                                     + usuarioExistente.getEmail());
                 } else {
-                    RolEntity rolPasante = rolRepo.findByNombre("PASANTE").get();
+                    List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("PASANTES");
+                    if (rolesEncontrados.isEmpty()) {
+                        throw new ResourceNotFoundException("Rol PASANTES no encontrado en la base de datos");
+                    }
+                    RolEntity rolPasante = rolesEncontrados.get(0);
 
-                    if (rolPasante != null && rolPasante.getEstado().equals("A")) {
-                        UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
-                        usuarioRol.setUsuario(usuarioExistente);
-                        usuarioRol.setRol(rolPasante);
-
+                    if (rolPasante.getEstado().equals("A")) {
                         ZonedDateTime utc5 = ZonedDateTime.now(ZoneId.of("America/Bogota"));
                         LocalDateTime localDateTimeUTC5 = utc5.toLocalDateTime();
-                        usuarioRol.setFechaAsignacion(localDateTimeUTC5);
-                        usuarioRol.setEstado("A");
 
-                        usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        // Verificar si ya tiene el rol
+                        java.util.Optional<UsuarioRolEntity> existingRol = usuarioExistente.getUsuarioRoles().stream()
+                                .filter(ur -> ur.getRol().getIdRol().equals(rolPasante.getIdRol()))
+                                .findFirst();
+
+                        if (existingRol.isPresent()) {
+                            UsuarioRolEntity ur = existingRol.get();
+                            ur.setEstado("A");
+                            ur.setFechaAsignacion(localDateTimeUTC5);
+                        } else {
+                            UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
+                            usuarioRol.setUsuario(usuarioExistente);
+                            usuarioRol.setRol(rolPasante);
+                            usuarioRol.setFechaAsignacion(localDateTimeUTC5);
+                            usuarioRol.setEstado("A");
+                            usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        }
+
                         usuarioRepo.save(usuarioExistente);
 
                         pasanteNuevo.setUsuario(usuarioExistente);
                     } else {
-                        throw new DataConflictException("Rol COORDINADOR no esta activo");
+                        throw new DataConflictException("Rol PASANTES no esta activo");
                     }
                 }
             } else {
                 throw new DataConflictException(
-                        "Usuario ya existe con cedula " + usuario.getCedula() + " y estÃ¡ inactivo");
+                        "Usuario ya existe con cedula " + usuario.getCedula() + " y está inactivo");
             }
         } else {
             UsuarioEntity usuarioNuevo = usuarioServ.registrarUsuario(usuario);
             pasanteNuevo.setUsuario(usuarioNuevo);
 
-            RolEntity rolPasante = rolRepo.findByNombre("PASANTE").get();
+            List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("PASANTES");
+            if (rolesEncontrados.isEmpty()) {
+                throw new ResourceNotFoundException("Rol PASANTES no encontrado en la base de datos");
+            }
+            RolEntity rolPasante = rolesEncontrados.get(0);
 
-            if (rolPasante != null && rolPasante.getEstado().equals("A")) {
+            if (rolPasante.getEstado().equals("A")) {
                 UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
                 usuarioRol.setUsuario(usuarioNuevo);
                 usuarioRol.setRol(rolPasante);

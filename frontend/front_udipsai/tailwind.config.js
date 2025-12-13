@@ -2,7 +2,12 @@
 module.exports = {
   content: ["./src/**/*.{html,ts}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'ucacue-crimson': '#D3102C',
+        'ucacue-watermelon': '#FF6E7E',
+      }
+    },
   },
   plugins: [],
 };

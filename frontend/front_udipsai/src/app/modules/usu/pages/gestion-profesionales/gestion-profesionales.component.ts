@@ -242,8 +242,11 @@ export class GestionProfesionalesComponent {
 
   validarFormulario(): boolean {
     return (
+      this.nuevoDoctor.cedula.trim() !== '' &&
+      this.nuevoDoctor.cedula.length === 10 &&
       this.nuevoDoctor.nombres.trim() !== '' &&
-      this.nuevoDoctor.areas.length >= 1 &&
+      this.nuevoDoctor.apellidos.trim() !== '' &&
+      this.nuevoDoctor.areas && this.nuevoDoctor.areas.length >= 1 &&
       this.correoValido(this.nuevoDoctor.email) &&
       this.telefonoValido(this.nuevoDoctor.celular)
     );

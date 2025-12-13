@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -179,19 +180,34 @@ public class ProfesionalService {
                 if (profesionalRepo.existsByUsuario_Cedula(usuario.getCedula())) {
                     throw new DataConflictException("Profesional ya existe con cedula " + usuario.getCedula());
                 } else {
-                    RolEntity rolProfesional = rolRepo.findByNombre("DOCTOR").get();
+                    List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("DOCTOR");
+                    if (rolesEncontrados.isEmpty()) {
+                        throw new ResourceNotFoundException("Rol DOCTOR no encontrado en la base de datos");
+                    }
+                    RolEntity rolProfesional = rolesEncontrados.get(0);
 
-                    if (rolProfesional != null && rolProfesional.getEstado().equals("A")) {
-                        UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
-                        usuarioRol.setUsuario(usuarioExistente);
-                        usuarioRol.setRol(rolProfesional);
-
+                    if (rolProfesional.getEstado().equals("A")) {
                         ZonedDateTime utc5 = ZonedDateTime.now(ZoneId.of("America/Bogota"));
                         LocalDateTime localDateTimeUTC5 = utc5.toLocalDateTime();
-                        usuarioRol.setFechaAsignacion(localDateTimeUTC5);
-                        usuarioRol.setEstado("A");
 
-                        usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        // Verificar si ya tiene el rol asignado (aunque sea inactivo)
+                        java.util.Optional<UsuarioRolEntity> existingRol = usuarioExistente.getUsuarioRoles().stream()
+                                .filter(ur -> ur.getRol().getIdRol().equals(rolProfesional.getIdRol()))
+                                .findFirst();
+
+                        if (existingRol.isPresent()) {
+                            UsuarioRolEntity ur = existingRol.get();
+                            ur.setEstado("A");
+                            ur.setFechaAsignacion(localDateTimeUTC5);
+                        } else {
+                            UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
+                            usuarioRol.setUsuario(usuarioExistente);
+                            usuarioRol.setRol(rolProfesional);
+                            usuarioRol.setFechaAsignacion(localDateTimeUTC5);
+                            usuarioRol.setEstado("A");
+                            usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        }
+
                         usuarioRepo.save(usuarioExistente);
 
                         profesionalNuevo.setUsuario(usuarioExistente);
@@ -205,7 +221,11 @@ public class ProfesionalService {
             }
         } else {
             UsuarioEntity usuarioNuevo = usuarioServ.registrarUsuario(usuario);
-            RolEntity rolProfesional = rolRepo.findByNombre("DOCTOR").get();
+            List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("DOCTOR");
+            if (rolesEncontrados.isEmpty()) {
+                throw new ResourceNotFoundException("Rol DOCTOR no encontrado en la base de datos");
+            }
+            RolEntity rolProfesional = rolesEncontrados.get(0);
 
             if (rolProfesional != null && rolProfesional.getEstado().equals("A")) {
                 UsuarioRolEntity usuarioRol = new UsuarioRolEntity();

@@ -24,7 +24,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
+
     private final JwtFilter jwtFilter;
     private final LogFilter logFilter;
 
@@ -57,118 +57,122 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Deshabilitar CSRF (no necesario en API REST con JWT)
-            .csrf(AbstractHttpConfigurer::disable)
-            
-            // Agregar filtros personalizados
-            .addFilterBefore(logFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            
-            // Configurar sesiones como STATELESS
-            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-            
-            // Habilitar CORS
-            .cors(cors -> {})
-            
-            // Configurar autorizaciÃ³n de endpoints
-            .authorizeHttpRequests(auth -> auth
-                // ========== Endpoints PÃºblicos ==========
-                .requestMatchers(WHITE_LIST_URL).permitAll()
-                
-                // ========== MÃ³dulo de AutenticaciÃ³n ==========
-                .requestMatchers(POST, "/api/auth/login").permitAll()
-                .requestMatchers(POST, "/api/auth/register").permitAll()
-                .requestMatchers(POST, "/api/auth/refresh").permitAll()
-                
-                // ========== MÃ³dulo de Usuarios ==========
-                // Admins
-                .requestMatchers(POST, "/api/admins").permitAll()  // Primer registro
-                .requestMatchers(GET, "/api/admins/**").hasAnyRole("ADMIN")
-                .requestMatchers(PUT, "/api/admins/**").hasAnyRole("ADMIN")
-                .requestMatchers(PATCH, "/api/admins/**").hasAnyRole("ADMIN")
-                .requestMatchers(DELETE, "/api/admins/**").hasAnyRole("ADMIN")
-                
-                // Usuarios genÃ©ricos
-                .requestMatchers(GET, "/api/usuarios/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PATCH, "/api/usuarios/cambiarContrasenia/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL", "PASANTE")
-                .requestMatchers(PATCH, "/api/usuarios/habilitar/**", "/api/usuarios/deshabilitar/**", "/api/usuarios/bloquear/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(DELETE, "/api/usuarios/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // Secretarias
-                .requestMatchers(POST, "/api/secretarias").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(GET, "/api/secretarias/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PUT, "/api/secretarias/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(PATCH, "/api/secretarias/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(DELETE, "/api/secretarias/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // Coordinadores
-                .requestMatchers(POST, "/api/coordinadores").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(GET, "/api/coordinadores/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PUT, "/api/coordinadores/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(PATCH, "/api/coordinadores/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(DELETE, "/api/coordinadores/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // Profesionales
-                .requestMatchers(POST, "/api/profesionales").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(GET, "/api/profesionales/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PUT, "/api/profesionales/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PATCH, "/api/profesionales/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(DELETE, "/api/profesionales/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // Pasantes
-                .requestMatchers(POST, "/api/pasantes").hasAnyRole("PROFESIONAL")
-                .requestMatchers(GET, "/api/pasantes/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PUT, "/api/pasantes/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL", "PASANTE")
-                .requestMatchers(PATCH, "/api/pasantes/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(DELETE, "/api/pasantes/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                
-                // Ãreas
-                .requestMatchers("/api/areas/**").permitAll()  // Acceso pÃºblico para listado
-                
-                // Roles
-                .requestMatchers(POST, "/api/roles").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(GET, "/api/roles/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PATCH, "/api/roles/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(DELETE, "/api/roles/**")
-                    .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // ========== MÃ³dulo de Citas ==========
-                .requestMatchers(POST, "/api/citas").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(GET, "/api/citas/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PUT, "/api/citas/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(DELETE, "/api/citas/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // Pacientes
-                .requestMatchers(POST, "/api/pacientes").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(GET, "/api/pacientes/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR", "PROFESIONAL")
-                .requestMatchers(PUT, "/api/pacientes/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                .requestMatchers(DELETE, "/api/pacientes/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADOR")
-                
-                // Cualquier otra peticiÃ³n requiere autenticaciÃ³n
-                .anyRequest().authenticated()
-            );
+                // Deshabilitar CSRF (no necesario en API REST con JWT)
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // Agregar filtros personalizados
+                .addFilterBefore(logFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // Configurar sesiones como STATELESS
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+
+                // Habilitar CORS
+                .cors(cors -> {
+                })
+
+                // Configurar autorizaciÃ³n de endpoints
+                .authorizeHttpRequests(auth -> auth
+                        // ========== Endpoints PÃºblicos ==========
+                        .requestMatchers(WHITE_LIST_URL).permitAll()
+
+                        // ========== MÃ³dulo de AutenticaciÃ³n ==========
+                        .requestMatchers(POST, "/api/auth/login").permitAll()
+                        .requestMatchers(POST, "/api/auth/register").permitAll()
+                        .requestMatchers(POST, "/api/auth/refresh").permitAll()
+
+                        // ========== MÃ³dulo de Usuarios ==========
+                        // Admins
+                        .requestMatchers(POST, "/api/admins").permitAll() // Primer registro
+                        .requestMatchers(GET, "/api/admins/**").hasAnyRole("ADMIN")
+                        .requestMatchers(PUT, "/api/admins/**").hasAnyRole("ADMIN")
+                        .requestMatchers(PATCH, "/api/admins/**").hasAnyRole("ADMIN")
+                        .requestMatchers(DELETE, "/api/admins/**").hasAnyRole("ADMIN")
+
+                        // Usuarios genéricos
+                        .requestMatchers(GET, "/api/usuarios/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PATCH, "/api/usuarios/cambiarContrasenia/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR", "PASANTES")
+                        .requestMatchers(PATCH, "/api/usuarios/habilitar/**", "/api/usuarios/deshabilitar/**",
+                                "/api/usuarios/bloquear/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(DELETE, "/api/usuarios/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // Secretarias
+                        .requestMatchers(POST, "/api/secretarias").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(GET, "/api/secretarias/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PUT, "/api/secretarias/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(PATCH, "/api/secretarias/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(DELETE, "/api/secretarias/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // Coordinadores
+                        .requestMatchers(POST, "/api/coordinadores").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(GET, "/api/coordinadores/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PUT, "/api/coordinadores/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(PATCH, "/api/coordinadores/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(DELETE, "/api/coordinadores/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // Profesionales (Doctores)
+                        .requestMatchers(POST, "/api/profesionales").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(GET, "/api/profesionales/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PUT, "/api/profesionales/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PATCH, "/api/profesionales/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(DELETE, "/api/profesionales/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // Pasantes
+                        .requestMatchers(POST, "/api/pasantes").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(GET, "/api/pasantes/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PUT, "/api/pasantes/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR", "PASANTES")
+                        .requestMatchers(PATCH, "/api/pasantes/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(DELETE, "/api/pasantes/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+
+                        // Áreas
+                        .requestMatchers("/api/areas/**").permitAll() // Acceso público para listado
+
+                        // Roles
+                        .requestMatchers(POST, "/api/roles").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(GET, "/api/roles/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PATCH, "/api/roles/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(DELETE, "/api/roles/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // ========== Módulo de Citas ==========
+                        .requestMatchers(POST, "/api/citas").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(GET, "/api/citas/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PUT, "/api/citas/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(DELETE, "/api/citas/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // Pacientes
+                        .requestMatchers(POST, "/api/pacientes").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(GET, "/api/pacientes/**")
+                        .hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA", "DOCTOR")
+                        .requestMatchers(PUT, "/api/pacientes/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+                        .requestMatchers(DELETE, "/api/pacientes/**").hasAnyRole("ADMIN", "SECRETARIA", "COORDINADORA")
+
+                        // Cualquier otra peticiÃ³n requiere autenticaciÃ³n
+                        .anyRequest().authenticated());
 
         return http.build();
     }

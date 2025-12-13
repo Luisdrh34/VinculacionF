@@ -1,6 +1,5 @@
 package com.udipsai.backend.usuarios.service;
 
-
 import com.udipsai.backend.common.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -164,19 +164,34 @@ public class SecretariaService {
                 if (secretariaRepo.existsByUsuario_Cedula(usuario.getCedula())) {
                     throw new DataConflictException("Ya existe una secretaria con cedula " + usuario.getCedula());
                 } else {
-                    RolEntity rolSecretaria = rolRepo.findByNombre("SECRETARIA").get();
+                    List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("SECRETARIA");
+                    if (rolesEncontrados.isEmpty()) {
+                        throw new ResourceNotFoundException("Rol SECRETARIA no encontrado en la base de datos");
+                    }
+                    RolEntity rolSecretaria = rolesEncontrados.get(0);
 
-                    if (rolSecretaria != null && rolSecretaria.getEstado().equals("A")) {
-                        UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
-                        usuarioRol.setUsuario(usuarioExistente);
-                        usuarioRol.setRol(rolSecretaria);
-
+                    if (rolSecretaria.getEstado().equals("A")) {
                         ZonedDateTime utc5 = ZonedDateTime.now(ZoneId.of("America/Bogota"));
                         LocalDateTime localDateTimeUTC5 = utc5.toLocalDateTime();
-                        usuarioRol.setFechaAsignacion(localDateTimeUTC5);
 
-                        usuarioRol.setEstado("A");
-                        usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        // Verificar si ya tiene el rol
+                        java.util.Optional<UsuarioRolEntity> existingRol = usuarioExistente.getUsuarioRoles().stream()
+                                .filter(ur -> ur.getRol().getIdRol().equals(rolSecretaria.getIdRol()))
+                                .findFirst();
+
+                        if (existingRol.isPresent()) {
+                            UsuarioRolEntity ur = existingRol.get();
+                            ur.setEstado("A");
+                            ur.setFechaAsignacion(localDateTimeUTC5);
+                        } else {
+                            UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
+                            usuarioRol.setUsuario(usuarioExistente);
+                            usuarioRol.setRol(rolSecretaria);
+                            usuarioRol.setFechaAsignacion(localDateTimeUTC5);
+                            usuarioRol.setEstado("A");
+                            usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        }
+
                         usuarioRepo.save(usuarioExistente);
                         secretariaNueva.setUsuario(usuarioExistente);
                     } else {
@@ -185,10 +200,15 @@ public class SecretariaService {
                 }
             } else {
                 throw new DataConflictException(
-                        "Usuario ya existe con cedula " + usuario.getCedula() + " y estÃ¡ inactivo");
+                        "Usuario ya existe con cedula " + usuario.getCedula() + " y está inactivo");
             }
         } else {
-            RolEntity rolSecretaria = rolRepo.findByNombre("SECRETARIA").get();
+            List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("SECRETARIA");
+            if (rolesEncontrados.isEmpty()) {
+                throw new ResourceNotFoundException("Rol SECRETARIA no encontrado en la base de datos");
+            }
+            RolEntity rolSecretaria = rolesEncontrados.get(0);
+
             UsuarioEntity usuarioNuevo = usuarioServ.registrarUsuario(usuario);
             UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
             usuarioRol.setUsuario(usuarioNuevo);
@@ -203,7 +223,6 @@ public class SecretariaService {
             usuarioRoles.add(usuarioRol);
             usuarioNuevo.setUsuarioRoles(usuarioRoles);
             usuarioRepo.save(usuarioNuevo);
-            secretariaNueva.setUsuario(usuarioNuevo);
             secretariaNueva.setUsuario(usuarioNuevo);
         }
 

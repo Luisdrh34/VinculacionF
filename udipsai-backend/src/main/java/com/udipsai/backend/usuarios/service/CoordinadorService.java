@@ -1,6 +1,5 @@
 package com.udipsai.backend.usuarios.service;
 
-
 import com.udipsai.backend.common.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -167,36 +167,56 @@ public class CoordinadorService {
                             "Coordinador ya existe con cedula " + usuario.getCedula() + " o email "
                                     + usuarioExistente.getEmail());
                 } else {
-                    RolEntity rolProfesional = rolRepo.findByNombre("COORDINADOR").get();
+                    List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("COORDINADORA");
+                    if (rolesEncontrados.isEmpty()) {
+                        throw new ResourceNotFoundException("Rol COORDINADORA no encontrado en la base de datos");
+                    }
+                    RolEntity rolProfesional = rolesEncontrados.get(0);
 
-                    if (rolProfesional != null && rolProfesional.getEstado().equals("A")) {
-                        UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
-                        usuarioRol.setUsuario(usuarioExistente);
-                        usuarioRol.setRol(rolProfesional);
-
+                    if (rolProfesional.getEstado().equals("A")) {
                         ZonedDateTime utc5 = ZonedDateTime.now(ZoneId.of("America/Bogota"));
                         LocalDateTime localDateTimeUTC5 = utc5.toLocalDateTime();
-                        usuarioRol.setFechaAsignacion(localDateTimeUTC5);
-                        usuarioRol.setEstado("A");
 
-                        usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        // Verificar si ya tiene el rol
+                        java.util.Optional<UsuarioRolEntity> existingRol = usuarioExistente.getUsuarioRoles().stream()
+                                .filter(ur -> ur.getRol().getIdRol().equals(rolProfesional.getIdRol()))
+                                .findFirst();
+
+                        if (existingRol.isPresent()) {
+                            UsuarioRolEntity ur = existingRol.get();
+                            ur.setEstado("A");
+                            ur.setFechaAsignacion(localDateTimeUTC5);
+                        } else {
+                            UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
+                            usuarioRol.setUsuario(usuarioExistente);
+                            usuarioRol.setRol(rolProfesional);
+                            usuarioRol.setFechaAsignacion(localDateTimeUTC5);
+                            usuarioRol.setEstado("A");
+                            usuarioExistente.getUsuarioRoles().add(usuarioRol);
+                        }
+
                         usuarioRepo.save(usuarioExistente);
 
                         coordinadorNuevo.setUsuario(usuarioExistente);
                     } else {
-                        throw new DataConflictException("Rol COORDINADOR no esta activo");
+                        throw new DataConflictException("Rol COORDINADORA no esta activo");
                     }
                 }
             } else {
                 throw new DataConflictException(
-                        "Usuario ya existe con cedula " + usuario.getCedula() + " y estÃ¡ inactivo");
+                        "Usuario ya existe con cedula " + usuario.getCedula() + " y está inactivo");
             }
         } else {
             UsuarioEntity usuarioNuevo = usuarioServ.registrarUsuario(usuario);
             coordinadorNuevo.setUsuario(usuarioNuevo);
-            RolEntity rolProfesional = rolRepo.findByNombre("COORDINADOR").get();
 
-            if (rolProfesional != null && rolProfesional.getEstado().equals("A")) {
+            List<RolEntity> rolesEncontrados = rolRepo.findAllByNombre("COORDINADORA");
+            if (rolesEncontrados.isEmpty()) {
+                throw new ResourceNotFoundException("Rol COORDINADORA no encontrado en la base de datos");
+            }
+            RolEntity rolProfesional = rolesEncontrados.get(0);
+
+            if (rolProfesional.getEstado().equals("A")) {
                 UsuarioRolEntity usuarioRol = new UsuarioRolEntity();
                 usuarioRol.setUsuario(usuarioNuevo);
                 usuarioRol.setRol(rolProfesional);
@@ -211,13 +231,10 @@ public class CoordinadorService {
 
                 coordinadorNuevo.setUsuario(usuarioNuevo);
             } else {
-                throw new DataConflictException("Rol COORDINADOR no esta activo");
+                throw new DataConflictException("Rol COORDINADORA no esta activo");
             }
 
-
         }
-
-
 
         CoordinadorEntity coordinadorGuardado = coordinadorRepo.save(coordinadorNuevo);
         CoordinadorDTO coordinadorDTO = mapearDTO(coordinadorGuardado);
