@@ -1,5 +1,6 @@
 -- Create View for Professionals by Area (Fix for missing specialists)
 DROP TABLE IF EXISTS vista_profesionales_areas;
+DROP VIEW IF EXISTS vista_profesionales_areas;
 CREATE OR REPLACE VIEW vista_profesionales_areas AS
 SELECT
     p.id_profesional AS id_profesional,
@@ -20,6 +21,35 @@ JOIN usuarios u ON p.id_usuario = u.id_usuario
 JOIN usuarios_areas ua ON u.id_usuario = ua.id_usuario
 JOIN areas a ON ua.id_area = a.id_area
 WHERE p.estado = 'A' AND ua.estado = 'A' AND u.estado = 'A';
+
+-- Create View for Citas Completa (Fix for appointment history)
+DROP TABLE IF EXISTS vista_citas_completa;
+DROP VIEW IF EXISTS vista_citas_completa;
+CREATE OR REPLACE VIEW vista_citas_completa AS
+SELECT
+    c.id_cita AS id_cita,
+    c.ficha_paciente AS ficha_paciente,
+    c.id_profesional AS id_profesional,
+    c.id_area AS id_area,
+    a.nombre AS nombre_area,
+    c.fecha AS fecha,
+    c.hora_inicio AS horainicio,
+    c.hora_fin AS horafin,
+    c.estado AS estado_cita,
+    c.fecha_creacion AS fecha_creacion_cita,
+    c.fecha_modificacion AS fecha_modificacion_cita,
+    p.especialidad AS especialidad,
+    p.estado AS estado_profesional,
+    u.apellidos AS apellidos,
+    u.cedula AS cedula,
+    u.celular AS celular,
+    u.email AS email,
+    u.estado AS estado_usuario,
+    u.nombres AS nombres
+FROM citas c
+JOIN profesionales p ON c.id_profesional = p.id_profesional
+JOIN usuarios u ON p.id_usuario = u.id_usuario
+JOIN areas a ON c.id_area = a.id_area;
 
 -- Insert roles securely (avoid duplicates)
 INSERT INTO roles (nombre, estado)

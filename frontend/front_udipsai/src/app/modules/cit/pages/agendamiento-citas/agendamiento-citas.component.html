@@ -165,7 +165,7 @@
             <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Fecha de Cita</label>
             <div class="relative group">
               <p-calendar [(ngModel)]="fechaCita" dateFormat="dd/mm/yy" [showIcon]="true" [minDate]="minDate"
-                placeholder="Seleccione Fecha" styleClass="w-full"
+                placeholder="Seleccione Fecha" appendTo="body" styleClass="w-full"
                 inputStyleClass="w-full rounded-l-xl border-y border-l border-gray-300 bg-white py-3 pl-4 focus:border-red-500 font-medium text-gray-700 h-[46px]"></p-calendar>
             </div>
           </div>
@@ -252,9 +252,7 @@
     </ng-template>
   </p-dialog>
 
-  <!-- Include other dialogs (Historial, Certificado) unchanged structure-wise but ensure they still work -->
-  <!-- Simplified inclusion for brevity if needed, but safe to overwrite if structure is maintained -->
-  <!-- Since I am replacing the whole file, I must include the rest -->
+  <!-- Modal de Historial de Citas -->
   <p-dialog header="" [(visible)]="displayHistorial" [modal]="true" [style]="{width: '80vw', 'max-width': '1100px'}"
     [draggable]="false" [resizable]="false" styleClass="rounded-xl overflow-hidden shadow-2xl">
 
@@ -328,6 +326,7 @@
     </div>
   </p-dialog>
 
+  <!-- Modal Certificado (Minimal styling update, preserving structure) -->
   <p-dialog header="Certificado de Atención" [(visible)]="displayCertificado" [modal]="true"
     [style]="{width: '600px', 'max-width': '90vw'}" styleClass="rounded-xl shadow-2xl">
     <div *ngIf="certificadoPaciente" class="flex flex-col gap-4 p-4">
