@@ -4,63 +4,72 @@
 @media print {
     @page {
         size: A4;
-        margin: 5mm;
+        margin: 0;
     }
 
     body {
-        background: white;
         margin: 0;
         padding: 0;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        background: white;
+        /* ESTRATEGIA NUCLEAR: Ocultar todo por defecto usando visibility */
+        visibility: hidden !important;
     }
 
-    /* OCULTAR TODO EL SHELL DE LA APLICACIÓN Y NOTIFICACIONES */
+    /* Ocultar elementos específicos del flujo para que no ocupen espacio */
     app-header-bar,
     app-sidebar,
     app-footer,
     .layout-topbar,
-    .layout-sidebar,
     .p-sidebar,
     .p-toast,
-    #toast-container,
-    .no-print-wrapper,
     header,
     nav,
     footer,
-    .no-print {
+    .no-print,
+    .p-component-overlay,
+    .p-dialog-mask {
         display: none !important;
     }
 
-    /* ELIMINAR MÁRGENES DE LOS CONTENEDORES PRINCIPALES */
-    .app-container,
-    .main-content {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        max-width: none !important;
-        border: none !important;
-    }
-
     /* VISIBILIZAR EL REPORTE */
-    .reporte-container {
-        display: block !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 1cm !important;
-        background: white;
-        position: relative !important;
+    .reporte-container,
+    .reporte-container * {
         visibility: visible !important;
     }
 
-    /* Asegurar que el árbol de elementos padres sea visible para que el hijo se vea */
+    .reporte-container {
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        background: white !important;
+        z-index: 99999 !important;
+    }
+
+    /* Asegurar que el árbol de elementos padres no corte el contenido */
     html,
     body,
     app-root,
     .app-container,
     .main-content {
         visibility: visible !important;
+        /* Necesario para que el hijo (reporte) se renderice */
         height: auto !important;
         overflow: visible !important;
+    }
+
+    /* Revertir visibility en body para que los hijos visibles sí se vean, 
+       pero mantener la ocultación de todo lo demás vía selectores específicos o 
+       confiar en que app-root > router-outlet > ... > reporte sea el único camino visible */
+    body {
+        visibility: visible !important;
+    }
+
+    /* Ocultar hermanos directos de app-root si existen (modals, overlays) */
+    body>*:not(app-root) {
+        display: none !important;
     }
 }
