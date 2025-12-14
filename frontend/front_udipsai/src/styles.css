@@ -1,1 +1,66 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Global Print Styles */
+@media print {
+    @page {
+        size: A4;
+        margin: 5mm;
+    }
+
+    body {
+        background: white;
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* OCULTAR TODO EL SHELL DE LA APLICACIÓN Y NOTIFICACIONES */
+    app-header-bar,
+    app-sidebar,
+    app-footer,
+    .layout-topbar,
+    .layout-sidebar,
+    .p-sidebar,
+    .p-toast,
+    #toast-container,
+    .no-print-wrapper,
+    header,
+    nav,
+    footer,
+    .no-print {
+        display: none !important;
+    }
+
+    /* ELIMINAR MÁRGENES DE LOS CONTENEDORES PRINCIPALES */
+    .app-container,
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        border: none !important;
+    }
+
+    /* VISIBILIZAR EL REPORTE */
+    .reporte-container {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 1cm !important;
+        background: white;
+        position: relative !important;
+        visibility: visible !important;
+    }
+
+    /* Asegurar que el árbol de elementos padres sea visible para que el hijo se vea */
+    html,
+    body,
+    app-root,
+    .app-container,
+    .main-content {
+        visibility: visible !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+}

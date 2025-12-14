@@ -40,4 +40,24 @@ export class PacienteService {
     return this.http.get<any>(`${this.URL_PACIENTES}/${id}`);
   }
 
+  obtenerPacientePorCedula(cedula: string): Observable<any> {
+    // Assuming the backend supports filtering by cedula via the filter endpoint effectively returning the single patient
+    // Or we might need to filter client-side if the API doesn't support direct cedula lookup.
+    // For now, let's try using the existing 'filtro' endpoint which likely searches by name/cedula
+    return new Observable(observer => {
+      this.obtenerPacientesPorFiltro(cedula, 0, 1).subscribe({
+        next: (page: any) => {
+          if (page.content && page.content.length > 0) {
+            // Check exact match if possible or return the first one
+            observer.next(page.content[0]);
+            observer.complete();
+          } else {
+            observer.error('Paciente no encontrado');
+          }
+        },
+        error: (err) => observer.error(err)
+      });
+    });
+  }
+
 }

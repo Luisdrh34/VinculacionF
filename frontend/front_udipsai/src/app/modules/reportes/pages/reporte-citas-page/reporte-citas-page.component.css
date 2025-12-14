@@ -1,0 +1,62 @@
+/* Estilos generales */
+.reporte-container {
+    display: none;
+    /* Oculto por defecto en pantalla, se muestra al imprimir o si se desea previsualizar fuera del modo print */
+    background: white;
+    padding: 2cm;
+    /* Margen estándar aproximado */
+    max-width: 21cm;
+    /* Ancho A4 */
+    margin: 0 auto;
+}
+
+/* Mostrar reporte en pantalla si se desea previsualizar, opcional */
+.reporte-container {
+    display: block;
+}
+
+/* Estilos para impresión */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+        /* Controlamos el margen desde el contenedor */
+    }
+
+    body {
+        background: white;
+        -webkit-print-color-adjust: exact;
+    }
+
+    /* Ocultar todo lo que no sea el reporte */
+    .no-print,
+    app-header,
+    app-header-bar,
+    app-sidebar,
+    nav,
+    footer,
+    .p-sidebar,
+    .layout-topbar {
+        display: none !important;
+    }
+
+    /* Asegurar que el reporte sea visible */
+    .reporte-container {
+        display: block !important;
+        width: 100%;
+        max-width: none;
+        padding: 1.5cm 2cm;
+        /* Margenes de impresión */
+        position: absolute;
+        top: 0;
+        left: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    /* Ajustes específicos para logotipos */
+    .header-logos img {
+        height: 60px;
+        /* Ajuste para que no sean enormes en papel */
+    }
+}

@@ -29,6 +29,7 @@ public interface PacienteRepository extends JpaRepository<PacienteEntity, Long> 
 
     @Query("SELECT p FROM PacienteEntity p WHERE " +
             "(:filtro IS NULL OR " +
+            "p.cedula LIKE CONCAT('%', :filtro, '%') OR " +
             "CAST(p.id AS text) LIKE CONCAT('%', :filtro, '%') OR " +
             "UPPER(p.nombresApellidos) LIKE UPPER(CONCAT('%', :filtro, '%')))")
     Page<PacienteEntity> findByFilters(@Param("filtro") String filtro, Pageable pageable);
