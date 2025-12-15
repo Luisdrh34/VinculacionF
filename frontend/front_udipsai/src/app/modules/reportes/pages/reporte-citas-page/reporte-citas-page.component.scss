@@ -1,0 +1,7 @@
+/* Los estilos de impresión se han movido a styles.scss para asegurar alcance global
+   y evitar problemas de encapsulamiento con ::ng-deep. 
+   Este archivo queda limpio o para estilos específicos del componente en pantalla. */
+
+:host {
+    display: block;
+}

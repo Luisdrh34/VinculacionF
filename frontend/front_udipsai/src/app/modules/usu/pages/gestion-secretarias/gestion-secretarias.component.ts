@@ -42,7 +42,7 @@ export class GestionSecretariasComponent implements OnInit {
     private areaService: AreaService,
     private toastService: ToastrService,
     private confirmService: ConfirmationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadSecretarias();
@@ -197,10 +197,8 @@ export class GestionSecretariasComponent implements OnInit {
       this.nuevoSecretaria.cedula?.trim() !== '' &&
       this.nuevoSecretaria.apellidos?.trim() !== '' &&
       this.nuevoSecretaria.nombres?.trim() !== '' &&
-      (this.nuevoSecretaria.email?.trim() === '' ||
-        this.correoValido(this.nuevoSecretaria.email)) &&
-      (this.nuevoSecretaria.celular?.trim() === '' ||
-        this.telefonoValido(this.nuevoSecretaria.celular))
+      this.correoValido(this.nuevoSecretaria.email) &&
+      this.telefonoValido(this.nuevoSecretaria.celular)
     );
   }
 
@@ -209,16 +207,14 @@ export class GestionSecretariasComponent implements OnInit {
       this.editSecretaria.cedula?.trim() !== '' &&
       this.editSecretaria.apellidos?.trim() !== '' &&
       this.editSecretaria.nombres?.trim() !== '' &&
-      (this.editSecretaria.email?.trim() === '' ||
-        this.correoValido(this.editSecretaria.email)) &&
-      (this.editSecretaria.celular?.trim() === '' ||
-        this.telefonoValido(this.editSecretaria.celular))
+      this.correoValido(this.editSecretaria.email) &&
+      this.telefonoValido(this.editSecretaria.celular)
     );
   }
 
   correoValido(correo: string): boolean {
-    if (correo?.trim() === '') {
-      return true; // Permitir correo vacío
+    if (!correo || correo.trim() === '') {
+      return false;
     }
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return regex.test(correo);
@@ -226,7 +222,7 @@ export class GestionSecretariasComponent implements OnInit {
 
   telefonoValido(telefono: string): boolean {
     if (!telefono) {
-      return true; // Permitir teléfono vacío o undefined
+      return false;
     }
     return telefono.startsWith('09') && telefono.length === 10;
   }

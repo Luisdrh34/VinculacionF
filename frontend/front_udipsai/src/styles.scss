@@ -5,15 +5,13 @@
 @import 'tailwindcss/utilities';
 
 /* Importar PrimeNG y PrimeIcons */
-@import "~primeng/resources/themes/saga-blue/theme.css"; // Puedes cambiar el tema según tu preferencia
+@import "~primeng/resources/themes/saga-blue/theme.css";
 @import "~primeng/resources/primeng.min.css";
 @import "~primeicons/primeicons.css";
 
 @import '../node_modules/ngx-toastr/toastr.css';
 
-
-
-:root{
+:root {
   --primary-color: #dd2928;
   --secondary-color: #c4c3c9;
   --success-color: #28a745;
@@ -31,4 +29,104 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
+}
+
+/* ==========================================================================
+   Global Print Styles - CLEAN FLOW VERSION
+   ========================================================================== */
+@media print {
+
+  /* 1. Global Resets */
+  * {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* 2. Configuración de página - Márgenes a 0 para ocultar encabezados del navegador */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    background: white !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 3. Ocultar elementos de UI Globales Explícitamente */
+  /* Incluye Toasts (ngx-toastr, PrimeNG), Sidebars y Headers */
+  app-header-bar,
+  app-sidebar,
+  app-footer,
+  nav,
+  header,
+  footer,
+  .sidebar,
+  .header,
+  .navbar,
+  .toolbar,
+  .p-toast,
+  .p-sidebar,
+  #toast-container,
+  .toast-container,
+  .ngx-toastr,
+  .toast-message {
+    display: none !important;
+  }
+
+  /* 4. Ocultar elementos marcados como no-print */
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  /* 5. Reset Layout Wrappers */
+  #report-wrapper-outer,
+  #report-wrapper-inner {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    position: static !important;
+    float: none !important;
+    border: none !important;
+    overflow: visible !important;
+  }
+
+  /* 6. Report Container Styling */
+  /* Añadimos padding interno porque quitamos el margen de la página */
+  .reporte-print-area {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 2.5cm !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* 7. Ensure Table Visibility */
+  .reporte-print-area table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .reporte-print-area table thead tr {
+    background-color: #f3f4f6 !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }

@@ -21,12 +21,12 @@ export class LoginPageComponent implements OnInit {
     private toast: ToastrService
   ) {
     this.formLogin = this.fb.group({
-      cedula: ['', [Validators.required, Validators.maxLength(10)]],
+      cedula: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
       contrasenia: ['', [Validators.required]],
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   async ingresar() {
 
@@ -37,10 +37,10 @@ export class LoginPageComponent implements OnInit {
         .then(async (data: any) => {
           await this.loadingSpinner.hide();
           if (data.resCode === 0) {
-                      console.log("Login exitoso");
+            console.log("Login exitoso");
             this.router.navigateByUrl('principal/home');
           } else {
-          console.log(data.error);
+            console.log(data.error);
             this.toast.error(data.error);
             this.router.navigate(['/']);
           }

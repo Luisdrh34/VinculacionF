@@ -1,80 +1,146 @@
-<div class="p-6 no-print">
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-2xl font-bold mb-4 font-QuicksandBold text-gray-800">Generar Reporte de Citas</h2>
+<div id="report-wrapper-outer" class="min-h-[85vh] p-4 md:p-8 bg-gray-50 flex flex-col items-center">
 
-        <div class="flex gap-4 items-end">
-            <div class="flex-1 max-w-md">
-                <label for="cedula" class="block text-sm font-medium text-gray-700 mb-1">Cédula del Paciente</label>
-                <input type="text" id="cedula" [(ngModel)]="cedulaBusqueda" (keyup.enter)="buscarPaciente()"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ingrese el número de cédula">
+    <!-- Main Content Wrapper -->
+    <div id="report-wrapper-inner"
+        class="w-full max-w-[1600px] flex flex-col xl:flex-row items-start justify-center gap-8 transition-all duration-500">
+
+        <!-- Search Section -->
+        <!-- 'no-print' hides this entire block when printing -->
+        <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden relative no-print transition-all duration-500"
+            [ngClass]="{'xl:sticky xl:top-8': reporteData, 'mx-auto my-auto': !reporteData}">
+
+            <!-- Decorative subtle top bar -->
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-800"></div>
+
+            <div class="p-8 md:p-10">
+                <div class="text-center mb-8">
+                    <div
+                        class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-50 mb-4 shadow-sm ring-4 ring-white">
+                        <i class="pi pi-file-pdf text-4xl text-red-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight font-sans">Generar Reporte</h2>
+                    <p class="text-gray-500 mt-2 text-sm">Ingrese la cédula para consultar el historial de citas</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label for="cedula"
+                            class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Cédula del
+                            Paciente</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i
+                                    class="pi pi-id-card text-gray-400 group-focus-within:text-red-500 transition-colors text-lg"></i>
+                            </div>
+                            <input type="text" id="cedula" [(ngModel)]="cedulaBusqueda" (keyup.enter)="buscarPaciente()"
+                                (keypress)="validateNumberInput($event)" maxlength="10" pattern="[0-9]*"
+                                class="block w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all font-medium"
+                                placeholder="Ej: 0102030405">
+                        </div>
+                    </div>
+
+                    <div class="grid gap-3 pt-2">
+                        <button (click)="buscarPaciente()"
+                            class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-700/20 hover:shadow-red-700/40 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                            <i class="pi pi-search text-lg"></i>
+                            <span>Buscar y Generar</span>
+                        </button>
+
+                        <button *ngIf="reporteData" (click)="imprimir()"
+                            class="w-full bg-white border-2 border-gray-100 hover:border-red-100 text-gray-700 hover:text-red-600 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 group">
+                            <i class="pi pi-print text-lg text-gray-400 group-hover:text-red-500 transition-colors"></i>
+                            <span>Imprimir Reporte</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button (click)="buscarPaciente()"
-                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">
-                <i class="pi pi-search"></i> Buscar y Generar
-            </button>
 
-            <button *ngIf="reporteData" (click)="imprimir()"
-                class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors font-medium flex items-center gap-2 ml-auto">
-                <i class="pi pi-print"></i> Imprimir Reporte
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Reporte para Impresión -->
-<div *ngIf="reporteData" class="reporte-container">
-    <!-- Cabecera con Logos -->
-    <div class="header-logos mb-8">
-        <div class="flex justify-center items-center mb-6 gap-10">
-            <img src="assets/logo_UCACUE.png" alt="Universidad de Cuenca" class="h-40 object-contain">
-            <img src="assets/logo_UDIPSAI.png" alt="UDIPSAI" class="h-40 object-contain">
-        </div>
-        <div class="text-center">
-            <h1 class="text-xl font-bold uppercase">Unidad de Diagnóstico e Investigación<br>Psicopedagógica, Social y
-                de Apoyo a la Inclusión</h1>
-            <h2 class="text-lg font-semibold text-gray-600">Reporte de Asistencia a Citas</h2>
-        </div>
-    </div>
-
-    <!-- Información del Paciente -->
-    <div class="mb-6 border-b-2 border-gray-800 pb-4">
-        <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>
-                <p><span class="font-bold">Paciente:</span> {{ reporteData.pacienteNombreCompleto }}</p>
-                <p><span class="font-bold">Cédula:</span> {{ cedulaBusqueda }}</p>
-            </div>
-            <div class="text-right">
-                <p><span class="font-bold">Fecha de Emisión:</span> {{ fechaActual | date:'dd/MM/yyyy HH:mm' }}</p>
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-center gap-2">
+                <i class="pi pi-shield text-gray-400 text-xs"></i>
+                <span class="text-xs text-gray-400 font-medium">Sistema UDIPSAI - Módulo de Reportes</span>
             </div>
         </div>
-    </div>
 
-    <!-- Tabla de Citas -->
-    <table class="w-full border-collapse text-sm">
-        <thead>
-            <tr class="bg-gray-100 border-y-2 border-black">
-                <th class="py-2 px-3 text-left font-bold w-1/6">Fecha</th>
-                <th class="py-2 px-3 text-left font-bold w-1/6">Hora</th>
-                <th class="py-2 px-3 text-left font-bold">Profesional</th>
-                <th class="py-2 px-3 text-left font-bold">Área</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let cita of reporteData.citas" class="border-b border-gray-300">
-                <td class="py-2 px-3">{{ cita.fecha }}</td>
-                <td class="py-2 px-3">{{ cita.hora }}</td>
-                <td class="py-2 px-3">{{ cita.profesional }}</td>
-                <td class="py-2 px-3">{{ cita.area }}</td>
-            </tr>
-            <tr *ngIf="reporteData.citas.length === 0">
-                <td colspan="4" class="py-8 text-center text-gray-500 italic">No se encontraron citas recientes.</td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Reporte para Impresión -->
+        <!-- Added 'reporte-print-area' class for the nuclear print option -->
+        <div *ngIf="reporteData"
+            class="reporte-print-area flex-1 w-full max-w-[210mm] bg-white p-12 shadow-2xl rounded-xl transition-all duration-500">
+            <!-- Cabecera con Logos -->
+            <div class="header-logos mb-10 border-b-4 border-red-700 pb-6 print:pb-4">
+                <div class="flex justify-between items-center mb-6 px-4">
+                    <img src="assets/logo_UCACUE.png" alt="Universidad de Cuenca" class="h-24 object-contain">
+                    <img src="assets/logo_UDIPSAI.png" alt="UDIPSAI" class="h-24 object-contain">
+                </div>
+                <div class="text-center mt-4">
+                    <h1 class="text-xl font-bold uppercase tracking-wide text-gray-900 leading-tight">Unidad de
+                        Diagnóstico e Investigación<br>Psicopedagógica, Social y de Apoyo a la Inclusión</h1>
+                    <h2 class="text-lg font-semibold text-red-700 mt-2 uppercase tracking-widest">Reporte de Historial
+                        de Citas</h2>
+                </div>
+            </div>
 
-    <!-- Pie de página -->
-    <div class="mt-12 text-center text-xs text-gray-500 pt-4 border-t border-gray-300">
-        <p>Documento generado electrónicamente por el sistema UDIPSAI.</p>
+            <!-- Información del Paciente -->
+            <div
+                class="mb-8 bg-gray-50 p-6 rounded-lg border border-gray-200 print:bg-transparent print:border-none print:p-0">
+                <div class="grid grid-cols-2 gap-6 text-sm">
+                    <div class="space-y-2">
+                        <p class="flex items-baseline"><span
+                                class="font-bold w-24 text-gray-600 uppercase text-xs">Paciente:</span> <span
+                                class="text-base font-medium text-gray-900">{{ reporteData.pacienteNombreCompleto
+                                }}</span></p>
+                        <p class="flex items-baseline"><span
+                                class="font-bold w-24 text-gray-600 uppercase text-xs">Cédula:</span> <span
+                                class="text-base font-medium text-gray-900">{{ cedulaBusqueda }}</span></p>
+                    </div>
+                    <div class="space-y-2 text-right">
+                        <p><span class="font-bold text-gray-600 uppercase text-xs">Fecha de Emisión:</span></p>
+                        <p class="text-base font-medium text-gray-900">{{ fechaActual | date:'dd/MM/yyyy HH:mm' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Citas -->
+            <div class="mt-8 overflow-hidden print:mt-4">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b-2 border-red-700 text-red-800 print:text-black print:border-black">
+                            <th
+                                class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider whitespace-nowrap">
+                                Fecha</th>
+                            <th
+                                class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider whitespace-nowrap">
+                                Hora</th>
+                            <th class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider">Profesional</th>
+                            <th class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider">Área</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 print:divide-gray-300">
+                        <tr *ngFor="let cita of reporteData.citas; let odd = odd"
+                            class="hover:bg-gray-50 transition-colors print:hover:bg-transparent"
+                            [class.bg-gray-50]="odd">
+                            <td class="py-4 px-2 text-gray-900 font-semibold whitespace-nowrap">{{ cita.fecha }}</td>
+                            <td class="py-4 px-2 text-gray-600 whitespace-nowrap">{{ cita.hora }}</td>
+                            <td class="py-4 px-2 text-gray-800 uppercase font-medium">{{ cita.profesional }}</td>
+                            <td class="py-4 px-2 text-gray-600">{{ cita.area }}</td>
+                        </tr>
+                        <tr *ngIf="reporteData.citas.length === 0">
+                            <td colspan="4" class="py-12 text-center text-gray-500 italic">
+                                <i class="pi pi-inbox text-4xl mb-2 block text-gray-300"></i>
+                                No se encontraron registros de citas atendidas o agendadas para este paciente.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pie de página -->
+            <div
+                class="mt-16 text-center pt-8 border-t border-gray-300 print:border-black print:absolute print:bottom-0 print:w-full print:left-0">
+                <p class="text-sm font-bold text-gray-800">UDIPSAI - Universidad Católica de Cuenca</p>
+                <p class="text-xs text-gray-500 mt-1">Este documento es un reporte generado automáticamente y no
+                    requiere firma / Document invalid without official seal.</p>
+            </div>
+        </div>
+
     </div>
 </div>

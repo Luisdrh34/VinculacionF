@@ -6,27 +6,13 @@
   <div class="search-bar">
     <i class="pi pi-search"></i>
     <span class="p-input-icon-left">
-      <input
-        type="text"
-        pInputText
-        [(ngModel)]="filtroCitas"
-        placeholder="Número Ficha"
-        (input)="loadCitas()"
-      />
+      <input type="text" pInputText [(ngModel)]="filtroCitas" placeholder="Número Ficha" (input)="loadCitas()" />
     </span>
   </div>
 
   <div class="card">
-    <p-table
-      [value]="citas"
-      [paginator]="true"
-      responsiveLayout="scroll"
-      [paginator]="true"
-      [rows]="rows"
-      [totalRecords]="totalRecords"
-      [lazy]="true"
-      (onLazyLoad)="loadCitasLazy($event)"
-    >
+    <p-table [value]="citas" [paginator]="true" responsiveLayout="scroll" [paginator]="true" [rows]="rows"
+      [totalRecords]="totalRecords" [lazy]="true" (onLazyLoad)="loadCitasLazy($event)">
       <ng-template pTemplate="header">
         <tr>
           <th>ID</th>
@@ -48,50 +34,24 @@
           <td>{{ cita.estado }}</td>
 
           <td>
-            <button
-              pButton
-              *ngIf="cita.estado == 'PENDIENTE'"
-              type="button"
-              icon="pi pi-times"
-              class="btn-cancel"
-              label="Cancelar"
-              (click)="cancelarCita(cita.idCita)"
-            ></button>
-            <button
-              pButton
-              *ngIf="
-                cita.estado == 'FALTA_JUSTIFICADA' ||
-                cita.estado == 'FALTA_INJUSTIFICADA'
-              "
-              type="button"
-              icon="pi pi-calendar"
-              class="btn-reagendar"
-              label="Reagendar"
-              (click)="agendarCita(cita)"
-            ></button>
-            <button
-              pButton
-              *ngIf="
-                cita.estado == 'PENDIENTE' ||
-                cita.estado == 'FALTA_INJUSTIFICADA'
-              "
-              type="button"
+            <button pButton *ngIf="cita.estado == 'PENDIENTE'" type="button" icon="pi pi-times"
+              class="flex items-center justify-center bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 font-medium py-1 px-3 rounded-lg shadow-sm transition-all mr-2 mb-2"
+              label="Cancelar" (click)="cancelarCita(cita.idCita)"></button>
+
+            <button pButton *ngIf="cita.estado == 'FALTA_JUSTIFICADA' || cita.estado == 'FALTA_INJUSTIFICADA'"
+              type="button" icon="pi pi-calendar"
+              class="flex items-center justify-center bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 font-medium py-1 px-3 rounded-lg shadow-sm transition-all mr-2 mb-2"
+              label="Reagendar" (click)="agendarCita(cita)"></button>
+
+            <button pButton *ngIf="cita.estado == 'PENDIENTE' || cita.estado == 'FALTA_INJUSTIFICADA'" type="button"
               icon="pi pi-check"
-              class="btn-falta-justificada"
-              label="Falta Justificada"
-              (click)="faltaJustificada(cita.idCita)"
-            ></button>
-            <button
-              pButton
-              *ngIf="
-                cita.estado == 'PENDIENTE' || cita.estado == 'FALTA_JUSTIFICADA'
-              "
-              type="button"
-              icon="pi pi-times"
-              class="btn-falta-injustificada"
-              label="Falta Injustificada"
-              (click)="faltaInjustificada(cita.idCita)"
-            ></button>
+              class="flex items-center justify-center bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-medium py-1 px-3 rounded-lg shadow-sm transition-all mr-2 mb-2"
+              label="Falta Justificada" (click)="faltaJustificada(cita.idCita)"></button>
+
+            <button pButton *ngIf="cita.estado == 'PENDIENTE' || cita.estado == 'FALTA_JUSTIFICADA'" type="button"
+              icon="pi pi-times-circle"
+              class="flex items-center justify-center bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 font-medium py-1 px-3 rounded-lg shadow-sm transition-all mr-2 mb-2"
+              label="Falta Injustificada" (click)="faltaInjustificada(cita.idCita)"></button>
           </td>
         </tr>
       </ng-template>
@@ -99,13 +59,8 @@
     <div class="flex justify-center items-center mb-4">
       <!-- Dropdown para seleccionar el número de filas por página -->
       <p class="text-sm text-gray-600">Filas por página:</p>
-      <p-dropdown
-        [options]="rowsOptions"
-        [(ngModel)]="rows"
-        (onChange)="onRowsChange($event)"
-        placeholder="Filas por página"
-        class="rows-dropdown"
-      ></p-dropdown>
+      <p-dropdown [options]="rowsOptions" [(ngModel)]="rows" (onChange)="onRowsChange($event)"
+        placeholder="Filas por página" class="rows-dropdown"></p-dropdown>
 
       <!-- Mostrar el total de registros -->
       <div class="text-center">
@@ -117,92 +72,97 @@
   </div>
 </div>
 
-<p-dialog
-  header="Reagendar Cita"
-  [(visible)]="displayModal"
-  [modal]="true"
-  [responsive]="true"
-  [style]="{ width: '80vw' }"
-  [contentStyle]="{ 'min-height': '80vh', overflow: 'auto' }"
->
-  <div *ngIf="selectedCita" class="p-grid p-fluid form-container">
-    <div class="p-col-12 p-md-6">
-      <div class="p-field field-with-border">
-        <label for="paciente">Paciente</label>
-        <input
-          id="paciente"
-          type="text"
-          pInputText
-          [(ngModel)]="selectedCita.fichaPaciente"
-          [disabled]="true"
-          class="input-field"
-        />
+<p-dialog header="Reagendar Cita" [(visible)]="displayModal" [modal]="true"
+  [style]="{ width: '1100px', 'max-width': '98vw' }" [resizable]="false" [draggable]="false"
+  [contentStyle]="{'overflow': 'visible'}" styleClass="rounded-2xl overflow-hidden shadow-2xl">
+  <div *ngIf="selectedCita" class="p-8">
+
+    <!-- Top Row: Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Paciente</label>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold">
+            <i class="pi pi-user text-lg"></i>
+          </div>
+          <span class="text-lg font-bold text-gray-800">{{ selectedCita.fichaPaciente }}</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Especialidad Actual</label>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+            <i class="pi pi-tag text-lg"></i>
+          </div>
+          <span class="text-lg font-bold text-gray-800">{{ selectedCita.area?.nombre }}</span>
+        </div>
       </div>
     </div>
-    <div class="p-col-12 p-md-6">
-      <div class="p-field field-with-border">
-        <label for="especialidad">Especialidad</label>
-        <p-dropdown
-          [options]="especialidades"
-          [(ngModel)]="selectedCita.area.nombre"
-          [disabled]="true"
-          [placeholder]="selectedCita.area.nombre"
-        ></p-dropdown>
+
+    <!-- Middle Row: Calendar & Time -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+      <!-- Calendar Section (3 cols) -->
+      <div class="lg:col-span-3 flex flex-col gap-4">
+        <label class="text-sm font-bold text-gray-800 flex items-center gap-2">
+          <i class="pi pi-calendar text-red-500"></i> Seleccionar Nueva Fecha
+        </label>
+        <div class="p-4 border border-gray-200 rounded-xl shadow-sm bg-white">
+          <!-- Added style to force width -->
+          <p-calendar [(ngModel)]="selectedCita.fecha" [inline]="true" dateFormat="dd-mm-yy" [style]="{'width':'100%'}"
+            styleClass="w-full border-none"></p-calendar>
+        </div>
+        <button pButton label="Buscar Horas Disponibles" icon="pi pi-search"
+          class="p-button-danger w-full py-3 font-bold rounded-xl shadow-md transform hover:scale-[1.01] transition-all"
+          (click)="buscarHorasDisponibles()"></button>
+      </div>
+
+      <!-- Time Section (2 cols) -->
+      <div class="lg:col-span-2 flex flex-col gap-4">
+        <label class="text-sm font-bold text-gray-800 flex items-center gap-2">
+          <i class="pi pi-clock text-red-500"></i> Seleccionar Hora
+        </label>
+
+        <div class="bg-gray-50 rounded-xl p-6 border border-gray-100 h-full flex flex-col shadow-inner">
+          <div *ngIf="!horasDisponibles || horasDisponibles.length === 0"
+            class="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3 p-4 text-center">
+            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-2">
+              <i class="pi pi-calendar-times text-2xl text-gray-300"></i>
+            </div>
+            <p class="text-sm font-medium">Seleccione una fecha y haga clic en "Buscar Horas" para ver la
+              disponibilidad.</p>
+          </div>
+
+          <div *ngIf="horasDisponibles && horasDisponibles.length > 0" class="flex flex-col gap-4 animate-fade-in">
+            <div class="flex items-center justify-between text-sm text-gray-600 border-b border-gray-200 pb-2">
+              <span>Horarios disponibles:</span>
+              <span class="font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">{{ horasDisponibles.length
+                }} opciones</span>
+            </div>
+
+            <p-listbox [options]="horasDisponibles" [(ngModel)]="selectedCita.horaInicio"
+              [listStyle]="{'max-height': '250px'}" styleClass="w-full border-0 shadow-sm"
+              [disabled]="bloquearHoras"></p-listbox>
+
+            <div
+              class="mt-auto p-3 bg-blue-50 text-blue-800 rounded-lg text-xs flex items-start gap-2 border border-blue-100">
+              <i class="pi pi-info-circle mt-0.5"></i>
+              <span>La hora seleccionada quedará reservada para este paciente.</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="p-col-12 p-md-6">
-      <div class="p-field field-with-border">
-        <label for="fecha">Fecha</label>
-        <p-calendar
-          [(ngModel)]="selectedCita.fecha"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          [inline]="true"
-        ></p-calendar>
-      </div>
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
+      <button pButton label="Cancelar" icon="pi pi-times"
+        class="p-button-text p-button-secondary font-bold px-6 py-3 rounded-xl hover:bg-gray-50"
+        (click)="displayModal = false"></button>
+      <button pButton label="Confirmar Reagendamiento" icon="pi pi-save"
+        class="p-button-danger font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-red-500/30 transition-all"
+        (click)="reagendarCita()"></button>
     </div>
-    <div class="p-col-12 p-md-6">
-      <div class="p-field field-with-border">
-        <button
-          pButton
-          type="button"
-          label="Buscar Horas Disponibles"
-          icon="pi pi-search"
-          (click)="buscarHorasDisponibles()"
-          class="btn-search"
-        ></button>
-      </div>
-    </div>
-    <div class="p-col-12 p-md-6">
-      <div class="p-field field-with-border">
-        <label for="hora">Hora</label>
-        <p-dropdown
-          [options]="horasDisponibles"
-          [disabled]="bloquearHoras"
-          [(ngModel)]="selectedCita.horaInicio"
-          [placeholder]="selectedCita.horaInicio"
-        ></p-dropdown>
-      </div>
-    </div>
-    <div class="p-col-12">
-      <div class="p-field buttons-container">
-        <button
-          pButton
-          type="button"
-          label="Guardar"
-          icon="pi pi-check"
-          (click)="reagendarCita()"
-          class="btn-save"
-        ></button>
-        <button
-          pButton
-          type="button"
-          label="Cancelar"
-          icon="pi pi-times"
-          class="p-button-secondary btn-cancel"
-          (click)="displayModal = false"
-        ></button>
-      </div>
-    </div>
+
   </div>
 </p-dialog>

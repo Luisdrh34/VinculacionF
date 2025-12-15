@@ -185,8 +185,13 @@
             <i
               class="pi pi-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="nuevoPasante.cedula" placeholder="Ej: 0102030405" maxlength="10"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              (input)="validarNumero($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted"
+              [class.ng-invalid]="submitted && (nuevoPasante.cedula.trim() == '' || nuevoPasante.cedula.length !== 10)" />
           </div>
+          <small *ngIf="submitted && (nuevoPasante.cedula.trim() == '' || nuevoPasante.cedula.length !== 10)"
+            class="text-red-500 text-xs">Requerido (10 dígitos).</small>
         </div>
 
         <!-- Nombres -->
@@ -196,8 +201,11 @@
             <i
               class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="nuevoPasante.nombres" placeholder="Nombres completos"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && nuevoPasante.nombres.trim() == ''" />
           </div>
+          <small *ngIf="submitted && nuevoPasante.nombres.trim() == ''" class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Apellidos -->
@@ -207,8 +215,12 @@
             <i
               class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="nuevoPasante.apellidos" placeholder="Apellidos completos"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && nuevoPasante.apellidos.trim() == ''" />
           </div>
+          <small *ngIf="submitted && nuevoPasante.apellidos.trim() == ''"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Carrera -->
@@ -218,8 +230,10 @@
             <i
               class="pi pi-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="nuevoPasante.carrera" placeholder="Ej: Psicología Clínica"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && nuevoPasante.carrera.trim() == ''" />
           </div>
+          <small *ngIf="submitted && nuevoPasante.carrera.trim() == ''" class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Área Asignada -->
@@ -229,8 +243,11 @@
             placeholder="Seleccionar Áreas de Práctica"
             styleClass="w-full rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 py-1.5 shadow-sm"
             [panelStyle]="{'border-radius': '12px', 'overflow': 'hidden', 'box-shadow': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'}"
-            display="chip">
+            display="chip" [class.ng-dirty]="submitted"
+            [class.ng-invalid]="submitted && (!nuevoPasante.areas || nuevoPasante.areas.length === 0)">
           </p-multiSelect>
+          <small *ngIf="submitted && (!nuevoPasante.areas || nuevoPasante.areas.length === 0)"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
 
       </div>
@@ -247,8 +264,11 @@
             <i
               class="pi pi-at absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText type="email" [(ngModel)]="nuevoPasante.email" placeholder="ejemplo@ucacue.edu.ec"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && !correoValido(nuevoPasante.email)" />
           </div>
+          <small *ngIf="submitted && !correoValido(nuevoPasante.email)" class="text-red-500 text-xs">Correo
+            inválido.</small>
         </div>
 
         <!-- Teléfono -->
@@ -258,8 +278,12 @@
             <i
               class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="nuevoPasante.celular" placeholder="09XXXXXXXX" maxlength="10"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              (input)="validarNumero($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && !telefonoValido(nuevoPasante.celular)" />
           </div>
+          <small *ngIf="submitted && !telefonoValido(nuevoPasante.celular)" class="text-red-500 text-xs">Debe tener 10
+            dígitos (09...).</small>
         </div>
       </div>
     </div>
@@ -322,9 +346,12 @@
           <div class="relative group">
             <i
               class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
-            <input pInputText [(ngModel)]="pacienteEditando.nombres"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+            <input pInputText [(ngModel)]="pacienteEditando.nombres" (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && pacienteEditando.nombres.trim() == ''" />
           </div>
+          <small *ngIf="submitted && pacienteEditando.nombres.trim() == ''"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Apellidos -->
@@ -333,9 +360,12 @@
           <div class="relative group">
             <i
               class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
-            <input pInputText [(ngModel)]="pacienteEditando.apellidos"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+            <input pInputText [(ngModel)]="pacienteEditando.apellidos" (input)="validarTexto($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && pacienteEditando.apellidos.trim() == ''" />
           </div>
+          <small *ngIf="submitted && pacienteEditando.apellidos.trim() == ''"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Carrera -->
@@ -345,8 +375,11 @@
             <i
               class="pi pi-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="pacienteEditando.carrera"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && pacienteEditando.carrera.trim() == ''" />
           </div>
+          <small *ngIf="submitted && pacienteEditando.carrera.trim() == ''"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Áreas -->
@@ -355,7 +388,10 @@
           <p-multiSelect [options]="areas" [(ngModel)]="pacienteEditando.areas" optionLabel="nombre"
             placeholder="Selecciona Áreas"
             styleClass="w-full rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 py-1.5 shadow-sm"
-            [panelStyle]="{'border-radius': '12px'}" display="chip"></p-multiSelect>
+            [panelStyle]="{'border-radius': '12px'}" display="chip" [class.ng-dirty]="submitted"
+            [class.ng-invalid]="submitted && (!pacienteEditando.areas || pacienteEditando.areas.length === 0)"></p-multiSelect>
+          <small *ngIf="submitted && (!pacienteEditando.areas || pacienteEditando.areas.length === 0)"
+            class="text-red-500 text-xs">Requerido.</small>
         </div>
 
         <!-- Contacto -->
@@ -365,8 +401,11 @@
             <i
               class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText [(ngModel)]="pacienteEditando.email"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && !correoValido(pacienteEditando.email)" />
           </div>
+          <small *ngIf="submitted && !correoValido(pacienteEditando.email)" class="text-red-500 text-xs">Correo
+            inválido.</small>
         </div>
 
         <div class="flex flex-col gap-2">
@@ -374,9 +413,13 @@
           <div class="relative group">
             <i
               class="pi pi-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
-            <input pInputText [(ngModel)]="pacienteEditando.celular"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm" />
+            <input pInputText [(ngModel)]="pacienteEditando.celular" maxlength="10" (input)="validarNumero($event)"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
+              [class.ng-dirty]="submitted"
+              [class.ng-invalid]="submitted && !telefonoValido(pacienteEditando.celular)" />
           </div>
+          <small *ngIf="submitted && !telefonoValido(pacienteEditando.celular)" class="text-red-500 text-xs">Debe tener
+            10 dígitos (09...).</small>
         </div>
       </div>
     </div>

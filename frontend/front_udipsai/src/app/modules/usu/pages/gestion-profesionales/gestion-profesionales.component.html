@@ -262,7 +262,7 @@
               class="pi pi-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors z-10"></i>
             <input pInputText id="cedula_new" [(ngModel)]="nuevoDoctor.cedula"
               class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-slate-50 focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all font-medium text-gray-700 shadow-sm"
-              placeholder="Ej: 0102030405" />
+              placeholder="Ej: 0102030405" maxlength="10" (input)="validarCedula($event)" />
           </div>
           <small *ngIf="formSubmitted && (nuevoDoctor.cedula.trim() == '' || nuevoDoctor.cedula.length !== 10)"
             class="text-red-500 text-xs">Requerido (10 dígitos).</small>

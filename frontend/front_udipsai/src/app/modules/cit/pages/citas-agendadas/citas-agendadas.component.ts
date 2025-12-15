@@ -61,6 +61,93 @@ export class CitasAgendadasComponent implements OnInit {
     this.loadCitas();
   }
 
+  filterCitas(event: any) {
+    const query = event.target.value.toLowerCase();
+    if (query) {
+      this.citasFiltrados = this.citas.filter(
+        (paciente) =>
+          paciente.nombrePaciente.toLowerCase().includes(query) ||
+          paciente.motivo.toLowerCase().includes(query) ||
+          paciente.id.toString().includes(query) ||
+          paciente.fechaCita.toString().includes(query) ||
+          paciente.horaCita.toString().includes(query)
+      );
+      this.citas = this.citasFiltrados;
+    } else {
+      this.citas = this.citasRespaldo;
+    }
+  }
+
+  cancelarCita(citaId: number) {
+    this.loading = true;
+    this.citaService.cancelarCita(citaId).subscribe({
+      next: (data) => {
+        this.toastr.success('Cita cancelada con éxito.');
+        this.loading = false;
+        this.loadCitas();
+      },
+      error: (error) => {
+        this.toastr.error('Error: ' + error.error?.message || 'Error desconocido.');
+        this.loading = false;
+      },
+    });
+  }
+
+  faltaJustificada(citaId: number) {
+    this.loading = true;
+    this.citaService.faltaJustificada(citaId).subscribe({
+      next: (data) => {
+        this.toastr.success('Falta a la cita justificada.');
+        this.loading = false;
+        this.loadCitas();
+      },
+      error: (error) => {
+        this.toastr.error('Error: ' + error.error?.message || 'Error desconocido.');
+        this.loading = false;
+      },
+    });
+  }
+
+  faltaInjustificada(citaId: number) {
+    this.loading = true;
+    this.citaService.faltaInjustificada(citaId).subscribe({
+      next: (data) => {
+        this.toastr.success('Falta a la cita injustificada.');
+        this.loading = false;
+        this.loadCitas();
+      },
+      error: (error) => {
+        this.toastr.error('Error: ' + error.error?.message || 'Error desconocido.');
+        this.loading = false;
+      },
+    });
+  }
+
+  buscarHorasDisponibles(): void {
+    if (this.selectedCita.profesionalId && this.selectedCita.fecha) {
+      const fechaFormateada = this.datePipe.transform(
+        this.selectedCita.fecha,
+        'dd-MM-yyyy'
+      );
+      this.citaService
+        .encontrarHorasLibresProfesional(
+          this.selectedCita.profesionalId,
+          fechaFormateada!
+        )
+        .subscribe((response) => {
+          this.horasDisponibles = response;
+          this.bloquearHoras = false;
+        });
+    } else {
+      if (!this.selectedCita.profesionalId) {
+        this.toas.error('Seleccione un especialista');
+      }
+      if (!this.selectedCita.fecha) {
+        this.toas.error('Seleccione una fecha');
+      }
+    }
+  }
+
   loadCitas(event?: any) {
     if (this.filtroCitas != '') {
       this.citaService
@@ -102,10 +189,9 @@ export class CitasAgendadasComponent implements OnInit {
   }
 
   agendarCita(cita: any) {
-    this.selectedCita = cita;
+    this.selectedCita = { ...cita };
     this.selectedCita.fecha = this.convertirFecha(cita.fecha);
     this.displayModal = true;
-
     console.log(this.selectedCita);
   }
 
@@ -114,104 +200,12 @@ export class CitasAgendadasComponent implements OnInit {
       const [day, month, year] = fechaString.split('-').map(Number);
       return new Date(year, month - 1, day);
     } else if (fechaString instanceof Date) {
-      return fechaString; // Si ya es un objeto Date, devolverlo directamente
+      return fechaString;
     } else {
       throw new Error('Formato de fecha no válido');
     }
   }
 
-  filterCitas(event: any) {
-    const query = event.target.value.toLowerCase();
-    if (query) {
-      this.citasFiltrados = this.citas.filter(
-        (paciente) =>
-          paciente.nombrePaciente.toLowerCase().includes(query) ||
-          paciente.motivo.toLowerCase().includes(query) ||
-          paciente.id.toString().includes(query) ||
-          paciente.fechaCita.toString().includes(query) ||
-          paciente.horaCita.toString().includes(query)
-      );
-      this.citas = this.citasFiltrados;
-    } else {
-      this.citas = this.citasRespaldo;
-    }
-  }
-
-  cancelarCita(citaId: number) {
-    this.loading = true;
-    this.citaService.cancelarCita(citaId).subscribe({
-      next: (data) => {
-        this.toastr.success('Cita cancelada con éxito.');
-        this.loading = false;
-        this.loadCitas(); // Actualizar la lista de citas después de la cancelación
-      },
-      error: (error) => {
-        this.toastr.error(
-          'Error: ' + error.error?.message || 'Error desconocido.'
-        );
-        this.loading = false;
-      },
-    });
-  }
-
-  faltaJustificada(citaId: number) {
-    this.loading = true;
-    this.citaService.faltaJustificada(citaId).subscribe({
-      next: (data) => {
-        this.toastr.success('Falta a la cita justificada.');
-        this.loading = false;
-        this.loadCitas(); // Actualizar la lista de citas después de la falta justificada
-      },
-      error: (error) => {
-        this.toastr.error(
-          'Error: ' + error.error?.message || 'Error desconocido.'
-        );
-        this.loading = false;
-      },
-    });
-  }
-
-  faltaInjustificada(citaId: number) {
-    this.loading = true;
-    this.citaService.faltaInjustificada(citaId).subscribe({
-      next: (data) => {
-        this.toastr.success('Falta a la cita injustificada.');
-        this.loading = false;
-        this.loadCitas(); // Actualizar la lista de citas después de la falta injustificada
-      },
-      error: (error) => {
-        this.toastr.error(
-          'Error: ' + error.error?.message || 'Error desconocido.'
-        );
-        this.loading = false;
-      },
-    });
-  }
-
-  buscarHorasDisponibles(): void {
-    if (this.selectedCita.profesionalId && this.selectedCita.fecha) {
-      const fechaFormateada = this.datePipe.transform(
-        this.selectedCita.fecha,
-        'dd-MM-yyyy'
-      );
-      this.citaService
-        .encontrarHorasLibresProfesional(
-          this.selectedCita.profesionalId,
-          fechaFormateada!
-        )
-        .subscribe((response) => {
-          this.horasDisponibles = response;
-          this.bloquearHoras = false;
-        });
-    } else {
-      if (!this.selectedCita.profesionalId) {
-        this.toas.error('Seleccione un especialista');
-      }
-      if (!this.fechaCita) {
-        this.toas.error('Seleccione una fecha');
-      }
-    }
-  }
   reagendarCita() {
     console.log(this.selectedCita);
     if (
@@ -226,22 +220,26 @@ export class CitasAgendadasComponent implements OnInit {
       );
       this.selectedCita.hora = this.selectedCita.horaInicio;
       this.selectedCita.areaId = this.selectedCita.area.idArea;
+
+      this.loading = true;
       this.citaService
         .reagendarCita(this.selectedCita.idCita, this.selectedCita)
         .subscribe(
           (data) => {
             this.toastr.success('Cita reagendada con éxito.');
             this.displayModal = false;
+            this.loading = false;
             this.loadCitas();
           },
           (error) => {
             const errorMessage =
               error.error?.message || 'Ocurrió un error al reagendar la cita.';
             this.toastr.error('Error: ' + errorMessage);
+            this.loading = false;
           }
         );
     } else {
-      this.toastr.error('Por favor, seleccione una cita.');
+      this.toastr.error('Por favor, verifique los datos.');
     }
   }
 

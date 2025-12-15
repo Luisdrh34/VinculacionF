@@ -60,6 +60,11 @@ export class ProfilePageComponent {
 
   savePersonalInfoChanges() {
     console.log(this.personalInfo);
+    if (!this.validarInformacionPersonal()) {
+      this.toastr.error('Por favor revise la información ingresada (Email o Celular inválidos)');
+      return;
+    }
+
     this.usuarioService
       .editarUsuario(this.personalInfo.idUsuario, this.personalInfo)
       .subscribe(
@@ -83,6 +88,11 @@ export class ProfilePageComponent {
       return;
     }
 
+    if (this.nuevaContrasenia.length < 5) {
+      this.toastr.error('La nueva contraseña debe tener al menos 5 caracteres');
+      return;
+    }
+
     this.usuarioService
       .cambiarContrasenia(this.personalInfo.cedula, {
         contrasenia: this.contrasenia,
@@ -95,12 +105,32 @@ export class ProfilePageComponent {
           this.resetPasswordFields();
         },
         (error) => {
-          this.toastr.error(
-            'Error al cambiar la contraseña, compruebe que la contraseña actual sea correcta'
-          );
+          if (error.error && error.error.message) {
+            this.toastr.error(error.error.message);
+          } else {
+            this.toastr.error('Error al cambiar la contraseña, compruebe que la contraseña actual sea correcta');
+          }
           this.resetPasswordFields();
         }
       );
+  }
+
+  validarInformacionPersonal(): boolean {
+    return (
+      this.correoValido(this.personalInfo.email) &&
+      this.telefonoValido(this.personalInfo.celular)
+    );
+  }
+
+  correoValido(correo: string): boolean {
+    if (!correo || correo.trim() === '') return false;
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(correo);
+  }
+
+  telefonoValido(telefono: string): boolean {
+    if (!telefono) return false;
+    return telefono.startsWith('09') && telefono.length === 10 && !isNaN(Number(telefono));
   }
 
   resetPasswordFields() {

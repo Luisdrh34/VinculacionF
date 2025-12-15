@@ -146,27 +146,87 @@ export class GestionPasantesComponent implements OnInit {
     }
   }
 
-  agregarPasante() {
-    console.log(this.nuevoPasante);
-    this.nuevoPasante.contrasenia = this.nuevoPasante.cedula;
+  submitted: boolean = false;
 
-    this.usuarioService
-      .registrarPasante(this.nuevoPasante)
-      .subscribe((data) => {
-        this.toastService.success('Pasante agregado exitosamente');
-        this.loadPasantes();
-        this.displayAgregar = false;
-      });
+  agregarPasante() {
+    this.submitted = true;
+    if (this.validarFormulario()) {
+      this.nuevoPasante.contrasenia = this.nuevoPasante.cedula;
+
+      this.usuarioService
+        .registrarPasante(this.nuevoPasante)
+        .subscribe((data) => {
+          this.toastService.success('Pasante agregado exitosamente');
+          this.loadPasantes();
+          this.displayAgregar = false;
+          this.submitted = false;
+        }, (error) => {
+          this.toastService.error('Error al agregar pasante');
+        });
+    } else {
+      this.toastService.error('Por favor complete todos los campos requeridos correctamente.');
+    }
   }
 
   editarPasante() {
-    this.usuarioService
-      .actualizarPasante(this.pacienteEditando.cedula, this.pacienteEditando)
-      .subscribe((data) => {
-        this.toastService.success('Pasante actualizado exitosamente');
-        this.loadPasantes();
-        this.editandoPasante = false;
-      });
+    this.submitted = true;
+    if (this.validarFormularioEdicion()) {
+      this.usuarioService
+        .actualizarPasante(this.pacienteEditando.cedula, this.pacienteEditando)
+        .subscribe((data) => {
+          this.toastService.success('Pasante actualizado exitosamente');
+          this.loadPasantes();
+          this.editandoPasante = false;
+          this.submitted = false;
+        }, (error) => {
+          this.toastService.error('Error al actualizar pasante');
+        });
+    } else {
+      this.toastService.error('Por favor complete todos los campos requeridos correctamente.');
+    }
+  }
+
+  validarFormulario(): boolean {
+    return (
+      this.nuevoPasante.cedula.trim() !== '' &&
+      this.nuevoPasante.cedula.length === 10 &&
+      this.nuevoPasante.nombres.trim() !== '' &&
+      this.nuevoPasante.apellidos.trim() !== '' &&
+      this.nuevoPasante.carrera.trim() !== '' &&
+      this.nuevoPasante.areas && this.nuevoPasante.areas.length >= 1 &&
+      this.correoValido(this.nuevoPasante.email) &&
+      this.telefonoValido(this.nuevoPasante.celular)
+    );
+  }
+
+  validarFormularioEdicion(): boolean {
+    return (
+      this.pacienteEditando.nombres.trim() !== '' &&
+      this.pacienteEditando.apellidos.trim() !== '' &&
+      this.pacienteEditando.carrera.trim() !== '' &&
+      this.pacienteEditando.areas && this.pacienteEditando.areas.length >= 1 &&
+      this.correoValido(this.pacienteEditando.email) &&
+      this.telefonoValido(this.pacienteEditando.celular)
+    );
+  }
+
+  correoValido(correo: string): boolean {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(correo);
+  }
+
+  telefonoValido(telefono: string): boolean {
+    return !!telefono && telefono.startsWith('09') && telefono.length === 10;
+  }
+
+  validarTexto(event: Event) {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/\d/g, '');
+  }
+
+  validarNumero(event: Event) {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '');
   }
 
   iniciarEdicion(pasante: Pasante) {

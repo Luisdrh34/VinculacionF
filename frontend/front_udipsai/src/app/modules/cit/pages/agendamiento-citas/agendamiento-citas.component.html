@@ -100,12 +100,12 @@
 
     <ng-template pTemplate="header">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-600 animate-pulse-slow">
+        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-red-600 animate-pulse-slow">
           <i class="pi pi-calendar-plus text-2xl"></i>
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-800 m-0">Agendar Nueva Cita</h2>
-          <p class="text-sm text-gray-500 m-0 font-normal">Complete los detalles y seleccione los horarios deseados.</p>
+          <h2 class="text-2xl font-bold text-white m-0">Agendar Nueva Cita</h2>
+          <p class="text-sm text-red-100 m-0 font-normal">Complete los detalles y seleccione los horarios deseados.</p>
         </div>
       </div>
     </ng-template>
@@ -145,29 +145,38 @@
 
           <!-- Especialidad -->
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Especialidad</label>
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Especialidad <span
+                class="text-red-500">*</span></label>
             <p-dropdown [options]="especialidades" [(ngModel)]="especialidadCita"
               (onChange)="cargarEspecialistas($event)" placeholder="Seleccione Especialidad"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && !especialidadCita"
               styleClass="w-full rounded-xl border border-gray-300 bg-white focus:border-red-500 py-1.5 shadow-sm"
               [panelStyle]="{'border-radius': '12px'}"></p-dropdown>
+            <small *ngIf="submitted && !especialidadCita" class="text-red-500 text-xs">Requerido</small>
           </div>
 
           <!-- Especialista -->
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Especialista</label>
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Especialista <span
+                class="text-red-500">*</span></label>
             <p-dropdown [options]="especialistas" [(ngModel)]="especialistaCita" placeholder="Seleccione Especialista"
+              [class.ng-dirty]="submitted" [class.ng-invalid]="submitted && !especialistaCita"
               styleClass="w-full rounded-xl border border-gray-300 bg-white focus:border-red-500 py-1.5 shadow-sm"
               [panelStyle]="{'border-radius': '12px'}"></p-dropdown>
+            <small *ngIf="submitted && !especialistaCita" class="text-red-500 text-xs">Requerido</small>
           </div>
 
           <!-- Fecha -->
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Fecha de Cita</label>
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wide">Fecha de Cita <span
+                class="text-red-500">*</span></label>
             <div class="relative group">
               <p-calendar [(ngModel)]="fechaCita" dateFormat="dd/mm/yy" [showIcon]="true" [minDate]="minDate"
-                placeholder="Seleccione Fecha" appendTo="body" styleClass="w-full"
+                placeholder="Seleccione Fecha" appendTo="body" styleClass="w-full" [class.ng-dirty]="submitted"
+                [class.ng-invalid]="submitted && !fechaCita"
                 inputStyleClass="w-full rounded-l-xl border-y border-l border-gray-300 bg-white py-3 pl-4 focus:border-red-500 font-medium text-gray-700 h-[46px]"></p-calendar>
             </div>
+            <small *ngIf="submitted && !fechaCita" class="text-red-500 text-xs">Requerido</small>
           </div>
 
           <!-- Boton Buscar -->
@@ -258,12 +267,12 @@
 
     <ng-template pTemplate="header">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600">
           <i class="pi pi-history text-xl"></i>
         </div>
         <div>
-          <h2 class="text-lg font-bold text-gray-800 m-0">Historial de Citas</h2>
-          <p class="text-sm text-gray-500 m-0 font-normal">Registro de atenciones del paciente</p>
+          <h2 class="text-lg font-bold text-white m-0">Historial de Citas</h2>
+          <p class="text-sm text-red-100 m-0 font-normal">Registro de atenciones del paciente</p>
         </div>
       </div>
     </ng-template>
@@ -291,7 +300,7 @@
                 {{ cita.fecha | date : "yyyy-MM-dd" }}
               </div>
             </td>
-            <td class="p-3 text-gray-600">{{ cita.horainicio }}</td>
+            <td class="p-3 text-gray-600">{{ cita.horainicio }} - {{ cita.horafin }}</td>
             <td class="p-3">
               <span
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">

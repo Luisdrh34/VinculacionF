@@ -48,7 +48,7 @@ export class GestionCordinadoresComponent implements OnInit {
     private areaService: AreaService,
     private toastService: ToastrService,
     private confirmService: ConfirmationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadCoordinadores();
@@ -234,10 +234,8 @@ export class GestionCordinadoresComponent implements OnInit {
       this.nuevoCoordinador.nombres?.trim() !== '' &&
       this.nuevoCoordinador.apellidos?.trim() !== '' &&
       this.nuevoCoordinador.areas.length > 0 &&
-      (this.nuevoCoordinador.email?.trim() === '' ||
-        this.correoValido(this.nuevoCoordinador.email)) &&
-      (this.nuevoCoordinador.celular?.trim() === '' ||
-        this.telefonoValido(this.nuevoCoordinador.celular))
+      this.correoValido(this.nuevoCoordinador.email) &&
+      this.telefonoValido(this.nuevoCoordinador.celular)
     );
   }
 
@@ -246,16 +244,14 @@ export class GestionCordinadoresComponent implements OnInit {
       this.editCoordinador.nombres?.trim() !== '' &&
       this.editCoordinador.apellidos?.trim() !== '' &&
       this.editCoordinador.areas.length > 0 &&
-      (this.editCoordinador.email?.trim() === '' ||
-        this.correoValido(this.editCoordinador.email)) &&
-      (this.editCoordinador.celular?.trim() === '' ||
-        this.telefonoValido(this.editCoordinador.celular))
+      this.correoValido(this.editCoordinador.email) &&
+      this.telefonoValido(this.editCoordinador.celular)
     );
   }
 
   correoValido(correo: string): boolean {
-    if (correo?.trim() === '') {
-      return true; // Permitir correo vacío
+    if (!correo || correo.trim() === '') {
+      return false;
     }
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return regex.test(correo);
@@ -263,7 +259,7 @@ export class GestionCordinadoresComponent implements OnInit {
 
   telefonoValido(telefono: string): boolean {
     if (!telefono) {
-      return true; // Permitir teléfono vacío o undefined
+      return false;
     }
     return telefono.startsWith('09') && telefono.length === 10;
   }

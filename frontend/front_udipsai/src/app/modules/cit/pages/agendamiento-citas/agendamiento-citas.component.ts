@@ -140,10 +140,60 @@ export class AgendamientoCitasComponent implements OnInit {
         size: this.rowsHistorial,
       })
       .subscribe((response) => {
-        this.historialCitas = response.content;
-        this.totalRecordsHistorial = response.totalElements;
+        // Group consecutive appointments
+        this.historialCitas = this.groupConsecutiveAppointments(response.content);
+        this.totalRecordsHistorial = response.totalElements; // Note: Total records remains as per DB count for pagination logic
         this.displayHistorial = true;
       });
+  }
+
+  groupConsecutiveAppointments(citas: any[]): any[] {
+    if (!citas || citas.length === 0) return [];
+
+    const grouped: any[] = [];
+    let currentGroup: any = null;
+
+    // Helper to normalize time strings for comparison (e.g. "09:00:00" -> "09:00")
+    const normalizeTime = (t: string) => t && t.length >= 5 ? t.substring(0, 5) : t;
+
+    for (const cita of citas) {
+      if (!currentGroup) {
+        currentGroup = { ...cita };
+        continue;
+      }
+
+      // Check for same day, same area, same professional
+      const sameDay = cita.fecha === currentGroup.fecha;
+      // Compare area and professional. 
+      // Note: Backend DTO property names might differ slightly.
+      // Based on HTML: nombreArea, nombres, apellidos.
+      // We should check IDs if available, or names.
+      const sameArea = cita.nombreArea === currentGroup.nombreArea;
+      const sameProf = cita.nombres === currentGroup.nombres && cita.apellidos === currentGroup.apellidos;
+
+      // Check consecutiveness
+      // currentGroup.horafin should match cita.horainicio
+      const EndTime = normalizeTime(currentGroup.horafin);
+      const StartTime = normalizeTime(cita.horainicio);
+
+      const isConsecutive = EndTime === StartTime;
+
+      if (sameDay && sameArea && sameProf && isConsecutive) {
+        // Extend the current group
+        currentGroup.horafin = cita.horafin;
+        // Optionally accumulate IDs if you need to perform actions on all of them later, 
+        // but for display this is enough.
+      } else {
+        grouped.push(currentGroup);
+        currentGroup = { ...cita };
+      }
+    }
+
+    if (currentGroup) {
+      grouped.push(currentGroup);
+    }
+
+    return grouped;
   }
 
   mostrarHistorialCitas(paciente: any): void {
@@ -151,7 +201,10 @@ export class AgendamientoCitasComponent implements OnInit {
     this.loadCitasHistorial(null);
   }
 
+  submitted: boolean = false;
+
   guardarCita(): void {
+    this.submitted = true;
     if (
       this.selectedPaciente &&
       this.fechaCita &&
@@ -176,6 +229,7 @@ export class AgendamientoCitasComponent implements OnInit {
         (responses) => {
           this.toas.success(`${responses.length} cita(s) agendada(s) correctamente`);
           this.displayModal = false;
+          this.submitted = false; // Reset
           this.mostrarHistorialCitas(this.selectedPaciente);
         },
         (error) => {
@@ -190,6 +244,16 @@ export class AgendamientoCitasComponent implements OnInit {
       else if (this.horaCita.length === 0) this.toas.error('Seleccione al menos una hora');
     }
   }
+
+  // Helper for numeric input if needed in future, though standard inputs use type="number" or pattern
+  validateNumberInput(event: KeyboardEvent): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  }
+
 
   buscarHorasDisponibles(): void {
     if (this.especialistaCita && this.fechaCita) {

@@ -16,6 +16,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CitasAgendadasEspecialidadComponent } from './pages/citas-agendadas-especialidad/citas-agendadas-especialidad.component';
+import { ListboxModule } from 'primeng/listbox';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { CitasAgendadasEspecialidadComponent } from './pages/citas-agendadas-esp
     CalendarModule,
     DropdownModule,
     ConfirmDialogModule,
+    ListboxModule
   ],
   providers: [ConfirmationService, DatePipe],
 })
-export class CitModule {}
+export class CitModule { }

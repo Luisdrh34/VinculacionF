@@ -284,6 +284,11 @@ export class GestionProfesionalesComponent {
     input.value = input.value.replace(/[^0-9]/g, '');
   }
 
+  validarCedula(event: Event) {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '');
+  }
+
   resetFormulario() {
     this.nuevoDoctor = this.inicializarProfesional();
     this.formSubmitted = false;
