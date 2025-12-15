@@ -66,10 +66,10 @@
         <div *ngIf="reporteData"
             class="reporte-print-area flex-1 w-full max-w-[210mm] bg-white p-12 shadow-2xl rounded-xl transition-all duration-500">
             <!-- Cabecera con Logos -->
-            <div class="header-logos mb-10 border-b-4 border-red-700 pb-6 print:pb-4">
+            <div class="header-logos mb-4 border-b-2 border-red-700 pb-2 print:pb-2">
                 <div class="flex justify-between items-center mb-6 px-4">
-                    <img src="assets/logo_UCACUE.png" alt="Universidad de Cuenca" class="h-24 object-contain">
-                    <img src="assets/logo_UDIPSAI.png" alt="UDIPSAI" class="h-24 object-contain">
+                    <img src="assets/logo_UCACUE.png" alt="Universidad de Cuenca" class="h-16 object-contain">
+                    <img src="assets/logo_UDIPSAI.png" alt="UDIPSAI" class="h-16 object-contain">
                 </div>
                 <div class="text-center mt-4">
                     <h1 class="text-xl font-bold uppercase tracking-wide text-gray-900 leading-tight">Unidad de
@@ -81,7 +81,7 @@
 
             <!-- Información del Paciente -->
             <div
-                class="mb-8 bg-gray-50 p-6 rounded-lg border border-gray-200 print:bg-transparent print:border-none print:p-0">
+                class="mb-4 bg-gray-50 p-3 rounded-lg border border-gray-200 print:bg-transparent print:border-none print:p-0">
                 <div class="grid grid-cols-2 gap-6 text-sm">
                     <div class="space-y-2">
                         <p class="flex items-baseline"><span
@@ -105,23 +105,26 @@
                     <thead>
                         <tr class="border-b-2 border-red-700 text-red-800 print:text-black print:border-black">
                             <th
-                                class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider whitespace-nowrap">
+                                class="py-1.5 px-2 text-left font-bold uppercase text-xs tracking-wider whitespace-nowrap">
                                 Fecha</th>
                             <th
-                                class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider whitespace-nowrap">
+                                class="py-1.5 px-2 text-left font-bold uppercase text-xs tracking-wider whitespace-nowrap">
                                 Hora</th>
-                            <th class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider">Profesional</th>
-                            <th class="py-4 px-2 text-left font-bold uppercase text-xs tracking-wider">Área</th>
+                            <th class="py-1.5 px-2 text-left font-bold uppercase text-xs tracking-wider">Profesional
+                            </th>
+                            <th class="py-1.5 px-2 text-left font-bold uppercase text-xs tracking-wider">Área</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 print:divide-gray-300">
                         <tr *ngFor="let cita of reporteData.citas; let odd = odd"
                             class="hover:bg-gray-50 transition-colors print:hover:bg-transparent"
                             [class.bg-gray-50]="odd">
-                            <td class="py-4 px-2 text-gray-900 font-semibold whitespace-nowrap">{{ cita.fecha }}</td>
-                            <td class="py-4 px-2 text-gray-600 whitespace-nowrap">{{ cita.hora }}</td>
-                            <td class="py-4 px-2 text-gray-800 uppercase font-medium">{{ cita.profesional }}</td>
-                            <td class="py-4 px-2 text-gray-600">{{ cita.area }}</td>
+                            <td class="py-1.5 px-2 text-gray-900 font-semibold whitespace-nowrap">{{ cita.fecha }}</td>
+                            <td class="py-1.5 px-2 text-gray-600 whitespace-nowrap">{{ cita.hora }}</td>
+                            <td class="py-1.5 px-2 text-left text-gray-800 uppercase font-medium">{{ cita.profesional
+                                }}
+                            </td>
+                            <td class="py-1.5 px-2 text-gray-600">{{ cita.area }}</td>
                         </tr>
                         <tr *ngIf="reporteData.citas.length === 0">
                             <td colspan="4" class="py-12 text-center text-gray-500 italic">

@@ -15,6 +15,7 @@ import com.udipsai.backend.usuarios.persistence.repository.ProfesionalRepository
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class ReporteCitaService {
@@ -32,7 +33,7 @@ public class ReporteCitaService {
         // Obtener las ultimas 20 citas
         // Ordenamos por fecha de creacion de la cita de forma descendente para obtener
         // las mas recientes
-        Pageable pageable = PageRequest.of(0, 20, Sort.by("fecha").descending());
+        Pageable pageable = PageRequest.of(0, 15, Sort.by("fecha").descending());
         Page<VistaCitasCompleta> paginaCitas = vistaCitasCompletaRepository.findByFichaPaciente(fichaPaciente,
                 pageable);
 
@@ -71,7 +72,11 @@ public class ReporteCitaService {
             if (cita.getIdProfesional() != null) {
                 // Obtener el profesional y su usuario asociado para sacar el nombre
                 nombreProfesional = profesionalRepository.findById(Long.valueOf(cita.getIdProfesional()))
-                        .map(p -> p.getUsuario().getNombres() + " " + p.getUsuario().getApellidos())
+                        .map(p -> {
+                            String nombre = p.getUsuario().getNombres().split(" ")[0];
+                            String apellido = p.getUsuario().getApellidos().split(" ")[0];
+                            return nombre + " " + apellido;
+                        })
                         .orElse("Desconocido");
             }
 
@@ -82,6 +87,7 @@ public class ReporteCitaService {
                     cita.getNombreArea());
         }).collect(Collectors.toList());
 
+        Collections.reverse(citasDTO);
         respuesta.setCitas(citasDTO);
 
         return respuesta;

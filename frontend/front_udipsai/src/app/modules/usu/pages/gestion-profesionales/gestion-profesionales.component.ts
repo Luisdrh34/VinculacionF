@@ -116,6 +116,7 @@ export class GestionProfesionalesComponent {
   }
 
   agregarDoctor() {
+    this.resetFormulario();
     this.displayAgregarModal = true;
   }
   guardarNuevoDoctor() {
@@ -136,6 +137,7 @@ export class GestionProfesionalesComponent {
           this.loadProfesionales();
           this.displayAgregarModal = false;
           this.toastService.success('Profesional agregado exitosamente');
+          this.resetFormulario();
           // Adding the new professional to the doctors list
         },
         (error) => {
